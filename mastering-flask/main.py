@@ -26,6 +26,14 @@ class User(db.Model):
         return "<User, '{}'>".format(self.username)
 
 
+# tags_table variable refer to the 'posts_tags' Table
+tags_table = db.Table(
+    'posts_tags',
+    db.Column('post_id', db.Integer(), db.ForeignKey('posts.id')),
+    db.Column('tag_id', db.Integer(), db.ForeignKey('tags.id'))
+)
+
+
 class Post(db.Model):
     __tablename__ = 'posts'
 
@@ -69,14 +77,6 @@ class Tag(db.Model):
 
     def __repr__(self):
         return "<Tag '{}'>".format(self.title)
-
-
-# tags_table variable refer to the 'posts_tags' Table
-tags_table = db.Table(
-    'posts_tags',
-    db.Column('post_id', db.Integer(), db.ForeignKey('posts.id')),
-    db.Column('tag_id', db.Integer(), db.ForeignKey('tags.id'))
-)
 
 
 @app.route("/")
