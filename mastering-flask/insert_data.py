@@ -1,6 +1,8 @@
+# -*- coding: utf-8 -*-
 import random
 import datetime
-from main import User, Tag, Post, db
+from webapp.models import User, Tag, Post, db
+
 
 # add User
 user01 = User(username='user01')
