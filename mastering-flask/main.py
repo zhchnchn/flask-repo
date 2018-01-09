@@ -130,6 +130,7 @@ def post(post_id):
 
         db.session.add(new_comment)
         db.session.commit()
+        return redirect(url_for('post', post_id=post_id))
 
     post = Post.query.get_or_404(post_id)
     tags = post.tags
