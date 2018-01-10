@@ -107,4 +107,5 @@ ENV/
 ### database ###
 
 *.db
+*.sqlite
 
