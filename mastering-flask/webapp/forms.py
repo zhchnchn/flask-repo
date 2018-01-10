@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from flask_wtf import FlaskForm, RecaptchaField
+from flask_wtf import FlaskForm
+# from flask_wtf import RecaptchaField
 from wtforms import StringField, TextAreaField, PasswordField, BooleanField
 from wtforms.validators import DataRequired, Length, EqualTo
 from models import User
@@ -44,7 +45,7 @@ class RegisterForm(FlaskForm):
     # EqualTo参数：需要确认的字段的变量名，以字符串的形式提供
     confirm = PasswordField('Confirm Password',
                             [DataRequired(), EqualTo('password')])
-    recaptcha = RecaptchaField()
+    # recaptcha = RecaptchaField()
 
     def validate(self):
         check_validate = super(RegisterForm, self).validate()
