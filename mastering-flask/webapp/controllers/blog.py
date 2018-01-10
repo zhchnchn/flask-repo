@@ -21,6 +21,14 @@ def sidebar_data():
     """
 
     recent = Post.query.order_by(Post.publish_date.desc()).limit(5).all()
+    # 下面的查询对应的SQL语句为
+    # SELECT tags.id AS tags_id, tags.title AS tags_title,
+    #        count(posts_tags.post_id) AS total
+    # FROM tags JOIN posts_tags
+    # ON tags.id = posts_tags.tag_id
+    # GROUP BY tags.id, tags.title
+    # ORDER BY total DESC
+    # LIMIT ? OFFSET ?
     top_tags = db.session.query(
         Tag, func.count(tags_table.c.post_id).label('total')
     ).join(tags_table).group_by(Tag).order_by(desc('total')).limit(5).all()

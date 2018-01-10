@@ -2,6 +2,7 @@
 from flask import Flask
 from controllers.blog import blog_blueprint
 from controllers.main import main_blueprint
+from controllers.auth import auth_blueprint
 from models import db
 from extensions import bcrypt
 
@@ -26,6 +27,7 @@ def create_app(object_name):
     # register blueprint
     app.register_blueprint(blog_blueprint)
     app.register_blueprint(main_blueprint)
+    app.register_blueprint(auth_blueprint)
 
     return app
 

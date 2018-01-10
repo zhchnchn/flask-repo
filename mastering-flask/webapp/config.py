@@ -8,6 +8,9 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 class Config(object):
     # used for WTForms
     SECRET_KEY = 'hard to guess string'
+    # used for google reCAPTCHA
+    RECAPTCHA_PUBLIC_KEY = "6LfxDkAUAAAAALj-PpjdEd-zb1MKakbxD776zaAK"
+    RECAPTCHA_PRIVATE_KEY = '6LfxDkAUAAAAAPtAOUGy278uYYwEYp31cmE4QbVg'
 
 
 class ProductConfig(Config):
@@ -24,4 +27,6 @@ class DevConfig(Config):
                                                           'data.sqlite')
     SQLALCHEMY_COMMIT_ON_TERDOWN = True
     SQLALCHEMY_TRACK_MODIFICATIONS = True
+    # 将ORM操作转为对应的SQL语句并显示
+    # SQLALCHEMY_ECHO = True
 
