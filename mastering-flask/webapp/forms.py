@@ -13,6 +13,11 @@ class CommentForm(FlaskForm):
     text = TextAreaField('Comment', validators=[DataRequired()])
 
 
+class PostForm(FlaskForm):
+    title = StringField('Title', [DataRequired(), Length(max=255)])
+    text = TextAreaField('Content', [DataRequired()])
+
+
 ################## for auth_blueprint #######################
 
 class LoginForm(FlaskForm):

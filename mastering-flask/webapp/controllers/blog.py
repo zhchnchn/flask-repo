@@ -5,8 +5,7 @@ import os
 from flask import render_template, redirect, url_for, Blueprint
 from sqlalchemy import func, desc
 from ..models import db, Post, Tag, tags_table, Comment, User
-from ..forms import CommentForm
-
+from ..forms import CommentForm, PostForm
 
 blog_blueprint = Blueprint('blog', __name__,
                            # template_folder='../templates/blog'
@@ -67,6 +66,40 @@ def post(post_id):
 
     return render_template('post.html', post=post, tags=tags, comments=comments,
                            recent=recent, top_tags=top_tags, form=form)
+
+
+@blog_blueprint.route('/new', methods=['GET', 'POST'])
+def new_post():
+    form = PostForm()
+    if form.validate_on_submit():
+        new_post = Post(form.title.data)
+        new_post.text = form.text.data
+        new_post.publish_date = datetime.datetime.now()
+
+        db.session.add(new_post)
+        db.session.commit()
+
+        return redirect(url_for('.post', post_id=new_post.id))
+
+    return render_template('new_post.html', form=form)
+
+
+@blog_blueprint.route('/edit/<int:post_id>', methods=['GET', 'POST'])
+def edit_post(post_id):
+    post = Post.query.get_or_404(post_id)
+    form = PostForm()
+    if form.validate_on_submit():
+        post.title = form.title.data
+        post.text = form.text.data
+        post.publish_date = datetime.datetime.now()
+
+        db.session.add(post)
+        db.session.commit()
+
+        return redirect(url_for('.post', post_id=post.id))
+
+    form.text.data = post.text
+    return render_template('edit_post.html', form=form, post=post)
 
 
 @blog_blueprint.route('/tag/<string:tag_name>')
