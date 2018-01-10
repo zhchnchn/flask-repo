@@ -3,6 +3,7 @@ from flask import Flask
 from controllers.blog import blog_blueprint
 from controllers.main import main_blueprint
 from models import db
+from extensions import bcrypt
 
 
 def create_app(object_name):
@@ -16,8 +17,12 @@ def create_app(object_name):
 
     app = Flask(__name__)
     app.config.from_object(object_name)
-    # init SQLAlchemy db
+
+    # init SQLAlchemy
     db.init_app(app)
+    # init Bcrypt
+    bcrypt.init_app(app)
+
     # register blueprint
     app.register_blueprint(blog_blueprint)
     app.register_blueprint(main_blueprint)
