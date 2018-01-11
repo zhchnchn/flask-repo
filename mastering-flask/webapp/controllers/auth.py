@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
-from flask import Blueprint, redirect, request, url_for, flash, render_template
+from flask import Blueprint, redirect, request, url_for, flash, \
+    render_template, current_app
 from flask_login import login_user, logout_user
+from flask_principal import Identity, AnonymousIdentity, identity_changed
 from ..forms import LoginForm, RegisterForm
 from ..models import db, User
 
@@ -17,6 +19,10 @@ def login():
         user = User.query.filter_by(username=form.username.data).one()
         login_user(user)
 
+        # identity changed
+        identity_changed.send(current_app._get_current_object(),
+                              identity=Identity(user.id))
+
         flash("You have been logged in.", category="success")
         # 重定向到前一次要访问的页面，没有的话重定向到首页
         return redirect(request.args.get('next') or url_for('blog.home'))
@@ -27,6 +33,10 @@ def login():
 @auth_blueprint.route('/logout', methods=['GET', 'POST'])
 def logout():
     logout_user()
+
+    # identity changed
+    identity_changed.send(current_app._get_current_object(),
+                          identity=AnonymousIdentity())
 
     flash("You have been logged out.", category="success")
     return redirect(url_for('.login'))

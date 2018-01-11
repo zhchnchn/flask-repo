@@ -2,11 +2,14 @@
 import datetime
 import os
 
-from flask import render_template, redirect, url_for, Blueprint
+from flask import render_template, redirect, url_for, Blueprint, abort
 from flask_login import login_required, current_user
+from flask_principal import Permission, UserNeed
 from sqlalchemy import func, desc
 from ..models import db, Post, Tag, posts_tags_table, Comment, User
 from ..forms import CommentForm, PostForm
+from ..extensions import admin_permission, poster_permission
+
 
 blog_blueprint = Blueprint('blog', __name__,
                            # template_folder='../templates/blog'
@@ -71,6 +74,7 @@ def post(post_id):
 
 @blog_blueprint.route('/new', methods=['GET', 'POST'])
 @login_required
+@poster_permission.require(http_exception=403)
 def new_post():
     form = PostForm()
     if form.validate_on_submit():
@@ -90,21 +94,29 @@ def new_post():
 
 @blog_blueprint.route('/edit/<int:post_id>', methods=['GET', 'POST'])
 @login_required
+@poster_permission.require(http_exception=403)
 def edit_post(post_id):
     post = Post.query.get_or_404(post_id)
-    form = PostForm()
-    if form.validate_on_submit():
-        post.title = form.title.data
-        post.text = form.text.data
-        post.publish_date = datetime.datetime.now()
 
-        db.session.add(post)
-        db.session.commit()
+    permission = Permission(UserNeed(post.user_id))
+    # 除了文章作者，我们希望管理员也可以修改任何文章
+    if permission.can() or admin_permission.can()
+        form = PostForm()
+        if form.validate_on_submit():
+            post.title = form.title.data
+            post.text = form.text.data
+            post.publish_date = datetime.datetime.now()
 
-        return redirect(url_for('.post', post_id=post.id))
+            db.session.add(post)
+            db.session.commit()
 
-    form.text.data = post.text
-    return render_template('edit_post.html', form=form, post=post)
+            return redirect(url_for('.post', post_id=post.id))
+
+        form.text.data = post.text
+        return render_template('edit_post.html', form=form, post=post)
+
+    # 如果没有权限，直接返回403错误
+    abort(403)
 
 
 @blog_blueprint.route('/tag/<string:tag_name>')
