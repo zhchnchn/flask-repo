@@ -5,7 +5,7 @@ import os
 from flask import render_template, redirect, url_for, Blueprint
 from flask_login import login_required, current_user
 from sqlalchemy import func, desc
-from ..models import db, Post, Tag, tags_table, Comment, User
+from ..models import db, Post, Tag, posts_tags_table, Comment, User
 from ..forms import CommentForm, PostForm
 
 blog_blueprint = Blueprint('blog', __name__,
@@ -30,8 +30,8 @@ def sidebar_data():
     # ORDER BY total DESC
     # LIMIT ? OFFSET ?
     top_tags = db.session.query(
-        Tag, func.count(tags_table.c.post_id).label('total')
-    ).join(tags_table).group_by(Tag).order_by(desc('total')).limit(5).all()
+        Tag, func.count(posts_tags_table.c.post_id).label('total')
+    ).join(posts_tags_table).group_by(Tag).order_by(desc('total')).limit(5).all()
 
     return recent, top_tags
 
