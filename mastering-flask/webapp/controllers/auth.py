@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from flask import Blueprint, redirect, url_for, flash, render_template
+from flask import Blueprint, redirect, request, url_for, flash, render_template
+from flask_login import login_user, logout_user
 from ..forms import LoginForm, RegisterForm
 from ..models import db, User
 
@@ -13,6 +14,9 @@ auth_blueprint = Blueprint('auth', __name__,
 def login():
     form = LoginForm()
     if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).one()
+        login_user(user)
+
         flash("You have been logged in.", category="success")
         return redirect(url_for('blog.home'))
 
@@ -21,6 +25,8 @@ def login():
 
 @auth_blueprint.route('/logout', methods=['GET', 'POST'])
 def logout():
+    logout_user()
+
     flash("You have been logged out.", category="success")
     return redirect(url_for('.login'))
 

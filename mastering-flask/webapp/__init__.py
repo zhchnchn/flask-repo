@@ -4,7 +4,7 @@ from controllers.blog import blog_blueprint
 from controllers.main import main_blueprint
 from controllers.auth import auth_blueprint
 from models import db
-from extensions import bcrypt
+from extensions import bcrypt, login_manager
 
 
 def create_app(object_name):
@@ -23,6 +23,8 @@ def create_app(object_name):
     db.init_app(app)
     # init Bcrypt
     bcrypt.init_app(app)
+    # init LoginManager
+    login_manager.init_app(app)
 
     # register blueprint
     app.register_blueprint(blog_blueprint)

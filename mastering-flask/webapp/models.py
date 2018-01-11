@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from flask_login import AnonymousUserMixin
 from flask_sqlalchemy import SQLAlchemy
 from extensions import bcrypt
 
@@ -24,6 +25,22 @@ class User(db.Model):
 
     def check_password(self, password):
         return bcrypt.check_password_hash(self.password, password)
+
+    def is_authenticated(self):
+        if isinstance(self, AnonymousUserMixin):
+            return False
+        return True
+
+    def is_active(self):
+        return True
+
+    def is_anonymous(self):
+        if isinstance(self, AnonymousUserMixin):
+            return True
+        return False
+
+    def get_id(self):
+        return unicode(self.id)
 
 
 # tags_table variable refer to the 'posts_tags' Table
