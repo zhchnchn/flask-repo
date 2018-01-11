@@ -18,7 +18,9 @@ def login():
         login_user(user)
 
         flash("You have been logged in.", category="success")
-        return redirect(url_for('blog.home'))
+        # 重定向到前一次要访问的页面，没有的话重定向到首页
+        print(request.args.get('next'))
+        return redirect(request.args.get('next') or url_for('blog.home'))
 
     return render_template('login.html', form=form)
 
