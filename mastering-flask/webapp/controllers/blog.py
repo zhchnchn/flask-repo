@@ -100,7 +100,7 @@ def edit_post(post_id):
 
     permission = Permission(UserNeed(post.user_id))
     # 除了文章作者，我们希望管理员也可以修改任何文章
-    if permission.can() or admin_permission.can()
+    if permission.can() or admin_permission.can():
         form = PostForm()
         if form.validate_on_submit():
             post.title = form.title.data

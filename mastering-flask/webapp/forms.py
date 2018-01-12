@@ -46,7 +46,7 @@ class LoginForm(FlaskForm):
 
 class RegisterForm(FlaskForm):
     username = StringField('Username', [DataRequired(), Length(max=255)])
-    password = PasswordField('Password', [DataRequired(), Length(min=8)])
+    password = PasswordField('Password', [DataRequired(), Length(min=3)])
     # EqualTo参数：需要确认的字段的变量名，以字符串的形式提供
     confirm = PasswordField('Confirm Password',
                             [DataRequired(), EqualTo('password')])

@@ -34,7 +34,7 @@ def load_user(userid):
 ########################## Flask-Principal extension ##########################
 
 principal = Principal()
-
+# 这里设定了3种权限, 这些权限会被绑定到 Identity 之后才会发挥作用.
 admin_permission = Permission(RoleNeed('admin'))
 poster_permission = Permission(RoleNeed('poster'))
 default_permission = Permission(RoleNeed('default'))
