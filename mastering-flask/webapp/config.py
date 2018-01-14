@@ -29,4 +29,5 @@ class DevConfig(Config):
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     # 将ORM操作转为对应的SQL语句并显示
     # SQLALCHEMY_ECHO = True
-
+    # MongoDB settings
+    MONGODB_SETTINGS = {'db': 'local', 'host': 'localhost', 'port': 27017}

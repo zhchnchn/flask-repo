@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
+import datetime
 from flask_login import AnonymousUserMixin
+from flask_mongoengine import MongoEngine
 from flask_sqlalchemy import SQLAlchemy
 from extensions import bcrypt
 
 db = SQLAlchemy()
+mongo = MongoEngine()
 
 
 # posts_tags_table
@@ -89,6 +92,15 @@ class Post(db.Model):
 
     def __init__(self, title):
         self.title = title
+
+    def __repr__(self):
+        return "<Post '{}'>".format(self.title)
+
+
+class Postm(mongo.Document):
+    title = mongo.StringField(required=True)
+    text = mongo.StringField()
+    publish_data = mongo.DateTimeField(default=datetime.datetime.now())
 
     def __repr__(self):
         return "<Post '{}'>".format(self.title)

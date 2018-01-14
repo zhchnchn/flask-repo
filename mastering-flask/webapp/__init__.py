@@ -5,7 +5,7 @@ from flask_principal import identity_loaded, UserNeed, RoleNeed
 from controllers.blog import blog_blueprint
 from controllers.main import main_blueprint
 from controllers.auth import auth_blueprint
-from models import db
+from models import db, mongo
 from extensions import bcrypt, login_manager, principal
 
 
@@ -29,6 +29,8 @@ def create_app(object_name):
     login_manager.init_app(app)
     # init Principal
     principal.init_app(app)
+    # init MongoEngine
+    mongo.init_app(app)
 
     @identity_loaded.connect_via(app)
     def on_identity_loaded(sender, identity):
