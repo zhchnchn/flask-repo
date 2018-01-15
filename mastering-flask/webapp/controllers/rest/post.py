@@ -2,7 +2,8 @@
 from flask import abort
 from flask_restful import Resource, fields, marshal_with
 from .fields import HTMLField
-from ...models import Post
+from .parsers import post_get_parser
+from ...models import Post, User, Tag
 
 nested_tag_fields = {
     'id': fields.Integer(),
@@ -27,7 +28,20 @@ class PostApi(Resource):
                 abort(404)
             return post
         else:
-            posts = Post.query.all()
-            return posts
+            args = post_get_parser.parse_args()
+            page = args['page'] or 1
+
+            if args['user']:
+                user = User.query.filter_by(username=args['user']).first()
+                if not user:
+                    abort(404)
+
+                posts = user.posts.order_by(
+                    Post.publish_date.desc()).paginate(page, 30)
+            else:
+                posts = Post.query.order_by(
+                    Post.publish_date.desc()).paginate(page, 30)
+
+            return posts.items
 
 
