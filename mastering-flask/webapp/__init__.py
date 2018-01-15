@@ -7,6 +7,7 @@ from controllers.main import main_blueprint
 from controllers.auth import auth_blueprint
 from models import db
 from extensions import bcrypt, login_manager, principal, rest_api
+from .controllers.rest.auth import AuthApi
 from .controllers.rest.post import PostApi
 
 
@@ -46,6 +47,7 @@ def create_app(object_name):
     # init RestApi
     rest_api.add_resource(PostApi, '/api/post', '/api/post/<int:post_id>',
                           endpoint='api')
+    rest_api.add_resource(AuthApi, '/api/auth')
     rest_api.init_app(app)
 
     # register blueprint
