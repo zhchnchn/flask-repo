@@ -4,7 +4,8 @@ import datetime
 from flask import abort
 from flask_restful import Resource, fields, marshal_with
 from .fields import HTMLField
-from .parsers import post_get_parser, post_post_parser, post_put_parser
+from .parsers import post_get_parser, post_post_parser, post_put_parser, \
+    post_delete_parser
 from ...models import Post, User, Tag, db
 
 nested_tag_fields = {
@@ -113,3 +114,21 @@ class PostApi(Resource):
 
         return post.id, 201
 
+    def delete(self, post_id=None):
+        # 不带post_id的请求都会被拒绝
+        if not post_id:
+            abort(400)
+
+        post = Post.query.get(post_id)
+        if not post:
+            abort(404)
+
+        args = post_delete_parser.parse_args(strict=True)
+        user = User.verify_auth_token(args['token'])
+
+        if user != post.user:
+            abort(403)
+
+        db.session.delete(post)
+        db.session.commit()
+        return "", 204

@@ -33,7 +33,7 @@ post_post_parser.add_argument(
     'token',
     type=str,
     required=True,
-    help='Auth token is required to create posts'
+    help='Auth token is required to create post'
 )
 post_post_parser.add_argument(
     'title',
@@ -60,7 +60,7 @@ post_put_parser.add_argument(
     'token',
     type=str,
     required=True,
-    help="Auth Token is required to edit posts"
+    help="Auth Token is required to edit post"
 )
 post_put_parser.add_argument(
     'title',
@@ -76,4 +76,11 @@ post_put_parser.add_argument(
     action='append'
 )
 
-
+# DELETE request
+post_delete_parser = reqparse.RequestParser()
+post_delete_parser.add_argument(
+    'token',
+    type=str,
+    required=True,
+    help="Auth Token is required to delete post"
+)
