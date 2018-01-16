@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
-
+import datetime
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -31,4 +31,11 @@ class DevConfig(Config):
     # SQLALCHEMY_ECHO = True
     CELERY_BROKER_URL = "amqp://guest:guest@localhost:5672//"
     CELERY_BACKEND_URL = "amqp://guest:guest@localhost:5672//"
+    CELERYBEAT_SCHEDULE = {
+        'log-every-30-seconds': {
+            'task': 'webapp.tasks.log',
+            'schedule': datetime.timedelta(seconds=30),
+            'args': ("Message",)
+        },
+    }
 
