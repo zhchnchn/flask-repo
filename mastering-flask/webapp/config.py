@@ -29,4 +29,6 @@ class DevConfig(Config):
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     # 将ORM操作转为对应的SQL语句并显示
     # SQLALCHEMY_ECHO = True
+    CELERY_BROKER_URL = "amqp://guest:guest@localhost:5672//"
+    CELERY_BACKEND_URL = "amqp://guest:guest@localhost:5672//"
 
