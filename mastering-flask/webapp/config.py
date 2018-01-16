@@ -30,7 +30,8 @@ class DevConfig(Config):
     # 将ORM操作转为对应的SQL语句并显示
     # SQLALCHEMY_ECHO = True
     CELERY_BROKER_URL = "amqp://guest:guest@localhost:5672//"
-    CELERY_BACKEND_URL = "amqp://guest:guest@localhost:5672//"
+    CELERY_RESULT_BACKEND = "amqp://guest:guest@localhost:5672//"  # redis://127.0.0.1:6379/1
+    # CELERY_IGNORE_RESULT = False
     CELERYBEAT_SCHEDULE = {
         'log-every-30-seconds': {
             'task': 'webapp.tasks.log',
