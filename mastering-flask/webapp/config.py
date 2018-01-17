@@ -55,5 +55,9 @@ class DevConfig(Config):
     }
 
     # Flask-Cache
-    CACHE_TYPE = 'simple'
+    CACHE_TYPE = 'redis'
+    CACHE_REDIS_HOST = 'localhost'
+    CACHE_REDIS_PORT = '6379'
+    # CACHE_REDIS_PASSWORD = 'password'
+    CACHE_REDIS_DB = '0'
 
