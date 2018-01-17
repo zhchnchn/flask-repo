@@ -27,10 +27,10 @@ def multiply(x, y):
     max_retries=5
 )
 def digest(self):
-    mail_host = "smtp.163.com"  # 使用的邮箱的smtp服务器地址，这里是163的smtp地址
-    mail_user = "xxx@163.com"  # 用户名
-    mail_pass = "xxx"  # 密码
-    mailto_list = ["xxx@qq.com", ]  # 收件人(列表)
+    mail_host = "smtp.163.com"     # 使用的邮箱的smtp服务器地址，这里是163的smtp地址
+    mail_user = "xxx@163.com"      # 用户名
+    mail_pass = "xxx"              # 密码
+    mailto_list = ["xxx@qq.com"]   # 收件人(列表)
 
     msg = MIMEText(digest_func(), 'html')
     # print(msg)
