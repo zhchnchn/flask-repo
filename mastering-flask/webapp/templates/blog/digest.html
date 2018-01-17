@@ -39,7 +39,7 @@
                                font-family: serif;
                                color: blue;
                                margin-bottom: 20px">
-                        <a href="{{ url_for('blog.post', post_id=post.id) }}">Read More</a>
+                        <a href="{{ url_for('.post', post_id=post.id, _external=True) }}">Read More</a>
                     </td>
                 </tr>
             {% endfor %}

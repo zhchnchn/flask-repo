@@ -18,7 +18,15 @@ def make_celery(app):
         backend=app.config['CELERY_RESULT_BACKEND']
     )
 
+    # http://kronosapiens.github.io/blog/2014/08/14/understanding-contexts-in-flask.html
+    # 运行Celery任务会报下面的错误：
+    # RuntimeError: Application was not able to create a URL adapter for request independent URL generation.
+    # You might be able to fix this by setting the SERVER_NAME config variable.
+    # 原因是weekly-digest任务中渲染digest.html模板时，url_for()函数需要上下文环境。
+    # 另外，不能把SERVER_NAME = 'localhost:5000'添加到DevConfig中，会导致所有的路由都不能正常访问.
+    app.config['SERVER_NAME'] = 'localhost:5000'
     celery.conf.update(app.config)
+
     TaskBase = celery.Task
 
     class ContextTask(TaskBase):

@@ -20,7 +20,7 @@ class ProductConfig(Config):
 
 
 class DevConfig(Config):
-    SERVER_NAME = 'localhost:5000'
+    # SERVER_NAME = 'localhost:5000'
     DEBUG = True
     # config.py文件被移动到了app目录下，但我们想将生成的sqlite数据库文件仍然放在外层目录下，
     # 则此处我们必须修改SQLALCHEMY的URL为相对路径。
@@ -32,6 +32,7 @@ class DevConfig(Config):
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     # 将ORM操作转为对应的SQL语句并显示
     # SQLALCHEMY_ECHO = True
+
     CELERY_BROKER_URL = "amqp://guest:guest@localhost:5672//"
     CELERY_RESULT_BACKEND = "amqp://guest:guest@localhost:5672//"  # redis://127.0.0.1:6379/1
     # CELERY_IGNORE_RESULT = False
@@ -44,11 +45,7 @@ class DevConfig(Config):
         # 每周六上午10点执行：crontab(day_of_week=6, hour='10')
         'weekly-digest': {
             'task': 'webapp.tasks.digest',
-            'schedule': crontab(minute='*/1')  # 每一秒执行一次
+            'schedule': crontab(minute='*/1')  # test: 每一分钟执行一次
         },
-    }
-
-    CELERYBEAT_SCHEDULE = {
-
     }
 
