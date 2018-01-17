@@ -61,3 +61,6 @@ class DevConfig(Config):
     # CACHE_REDIS_PASSWORD = 'password'
     CACHE_REDIS_DB = '0'
 
+    # Flask_Assets
+    ASSETS_DEBUG = True
+

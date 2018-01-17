@@ -10,6 +10,7 @@ from flask_restful import Api
 from flask_celery import Celery
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_cache import Cache
+from flask_assets import Environment, Bundle
 
 
 # ******************* Flask-Bcrypt extension ********************************* #
@@ -63,3 +64,20 @@ debug_toolbar = DebugToolbarExtension()
 
 cache = Cache()
 
+
+# ******************* Flask-Assets extension ********************************* #
+
+assets_env = Environment()
+
+main_css = Bundle(
+    'css/bootstrap.min.css',
+    filters='cssmin',
+    output='css/common.css'
+)
+
+main_js = Bundle(
+    'js/jquery.min.js',
+    'js/bootstrap.min.js',
+    filters='jsmin',
+    output='js/common.js'
+)

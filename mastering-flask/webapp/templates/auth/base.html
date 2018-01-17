@@ -7,7 +7,10 @@
     <title>
         {% block title %}Home{% endblock %}
     </title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css', _external=True) }}">
+    {% assets "main_css" %}
+    <link rel="stylesheet" type="text/css" href="{{ ASSET_URL }}" />
+    {% endassets %}
+    <!--<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css', _external=True) }}">-->
     <!--<script src='https://www.google.com/recaptcha/api.js'></script>-->
 </head>
 <body>
@@ -34,8 +37,11 @@
         {% endblock %}
     </div>
 
-    <script src="{{ url_for('static', filename='js/jquery.min.js', _external=True) }}"></script>
-    <script src="{{ url_for('static', filename='js/bootstrap.min.js', _external=True) }}"></script>
+    {% assets "main_js" %}
+    <script src="{{ ASSET_URL }}"></script>
+    {% endassets %}
+    <!--<script src="{{ url_for('static', filename='js/jquery.min.js', _external=True) }}"></script>-->
+    <!--<script src="{{ url_for('static', filename='js/bootstrap.min.js', _external=True) }}"></script>-->
     {% block js %}
     {% endblock %}
 </body>
