@@ -9,6 +9,7 @@ from flask_principal import Principal, Permission, RoleNeed
 from flask_restful import Api
 from flask_celery import Celery
 from flask_debugtoolbar import DebugToolbarExtension
+from flask_cache import Cache
 
 
 # ******************* Flask-Bcrypt extension ********************************* #
@@ -56,3 +57,9 @@ celery = Celery()
 # ******************* Flask-DebugToolbarExtension extension ****************** #
 
 debug_toolbar = DebugToolbarExtension()
+
+
+# ******************* Flask-Cache extension ********************************** #
+
+cache = Cache()
+

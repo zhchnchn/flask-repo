@@ -6,7 +6,8 @@ from controllers.blog import blog_blueprint
 from controllers.main import main_blueprint
 from controllers.auth import auth_blueprint
 from models import db
-from extensions import bcrypt, login_manager, principal, rest_api, debug_toolbar
+from extensions import bcrypt, login_manager, principal, rest_api, \
+    debug_toolbar, cache
 from .controllers.rest.auth import AuthApi
 from .controllers.rest.post import PostApi
 
@@ -46,6 +47,9 @@ def create_app(object_name):
 
     # init DebugToolbarExtension
     debug_toolbar.init_app(app)
+
+    # init Cache
+    cache.init_app(app)
 
     # init RestApi
     rest_api.add_resource(PostApi, '/api/post', '/api/post/<int:post_id>',

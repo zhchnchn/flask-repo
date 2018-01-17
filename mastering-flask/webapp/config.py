@@ -54,3 +54,6 @@ class DevConfig(Config):
         },
     }
 
+    # Flask-Cache
+    CACHE_TYPE = 'simple'
+
