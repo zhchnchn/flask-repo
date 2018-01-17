@@ -8,8 +8,7 @@ from flask_principal import Permission, UserNeed
 from sqlalchemy import func, desc
 from ..models import db, Post, Tag, posts_tags_table, Comment, User
 from ..forms import CommentForm, PostForm
-from ..extensions import admin_permission, poster_permission
-
+from ..extensions import admin_permission, poster_permission, cache
 
 blog_blueprint = Blueprint('blog', __name__,
                            # template_folder='../templates/blog'
@@ -17,7 +16,7 @@ blog_blueprint = Blueprint('blog', __name__,
                                os.path.pardir, 'templates', 'blog'),
                            url_prefix='/blog')
 
-
+@cache.cached(timeout=7200, key_prefix='sidebar_data')
 def sidebar_data():
     """侧边栏函数
     每个页面都有一个侧边栏，显示5篇最新的文章，以及5个最常用的标签
@@ -41,6 +40,7 @@ def sidebar_data():
 
 @blog_blueprint.route('/')
 @blog_blueprint.route('/<int:page>')
+@cache.cached(timeout=60)
 def home(page=1):
     posts = Post.query.order_by(Post.publish_date.desc()).paginate(page, 10)
     recent, top_tags = sidebar_data()
@@ -50,6 +50,7 @@ def home(page=1):
 
 
 @blog_blueprint.route('/post/<int:post_id>', methods=['GET', 'POST'])
+@cache.cached(timeout=60)
 def post(post_id):
     form = CommentForm()
     if form.validate_on_submit():
@@ -120,6 +121,7 @@ def edit_post(post_id):
 
 
 @blog_blueprint.route('/tag/<string:tag_name>')
+@cache.cached(timeout=60)
 def tag(tag_name):
     tag = Tag.query.filter_by(title=tag_name).first_or_404()
     posts = tag.posts.order_by(Post.publish_date.desc()).all()
@@ -130,6 +132,7 @@ def tag(tag_name):
 
 
 @blog_blueprint.route('/user/<string:username>')
+@cache.cached(timeout=60)
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
     posts = user.posts.order_by(Post.publish_date.desc()).all()
@@ -140,6 +143,7 @@ def user(username):
 
 
 @blog_blueprint.route('/digest')
+@cache.cached(timeout=60)
 def digest_func():
     # 找出这周的起始和结束日
     # 取出当前时间的年，周
