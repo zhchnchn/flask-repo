@@ -3,6 +3,7 @@ import os
 import random
 import datetime
 from flask_script import Manager, Server
+from flask_script.commands import ShowUrls, Clean
 from flask_migrate import Migrate, MigrateCommand
 from webapp import create_app
 from webapp.models import db, User, Post, Tag, Comment, Role
@@ -16,6 +17,8 @@ migrate = Migrate(app, db)
 manager = Manager(app)
 
 manager.add_command('server', Server())
+manager.add_command('showurls', ShowUrls())
+manager.add_command('clean', Clean())
 manager.add_command('db', MigrateCommand)
 
 
