@@ -21,7 +21,11 @@ class ProductConfig(Config):
 
 class DevConfig(Config):
     # SERVER_NAME = 'localhost:5000'
+
+    # Debug tool bar extension
     DEBUG = True
+    DEBUG_TB_INTERCEPT_REDIRECTS = False
+
     # config.py文件被移动到了app目录下，但我们想将生成的sqlite数据库文件仍然放在外层目录下，
     # 则此处我们必须修改SQLALCHEMY的URL为相对路径。
     # os.path.pardir 返回系统的父目录的表示形式，Linux下为".."
@@ -34,7 +38,8 @@ class DevConfig(Config):
     # SQLALCHEMY_ECHO = True
 
     CELERY_BROKER_URL = "amqp://guest:guest@localhost:5672//"
-    CELERY_RESULT_BACKEND = "amqp://guest:guest@localhost:5672//"  # redis://127.0.0.1:6379/1
+    # redis://127.0.0.1:6379/1
+    CELERY_RESULT_BACKEND = "amqp://guest:guest@localhost:5672//"
     # CELERY_IGNORE_RESULT = False
     CELERYBEAT_SCHEDULE = {
         'log-every-30-seconds': {

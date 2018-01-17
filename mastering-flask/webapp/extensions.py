@@ -8,14 +8,15 @@ from flask_login import LoginManager
 from flask_principal import Principal, Permission, RoleNeed
 from flask_restful import Api
 from flask_celery import Celery
+from flask_debugtoolbar import DebugToolbarExtension
 
 
-########################## Flask-Bcrypt extension #########################
+# ******************* Flask-Bcrypt extension ********************************* #
 
 bcrypt = Bcrypt()
 
 
-########################## Flask-Login extension ##########################
+# ******************* Flask-Login extension ********************************** #
 
 login_manager = LoginManager()
 
@@ -33,7 +34,7 @@ def load_user(userid):
     return User.query.get(userid)
 
 
-########################## Flask-Principal extension ##########################
+# ******************* Flask-Principal extension ****************************** #
 
 principal = Principal()
 # 这里设定了3种权限, 这些权限会被绑定到 Identity 之后才会发挥作用.
@@ -42,11 +43,16 @@ poster_permission = Permission(RoleNeed('poster'))
 default_permission = Permission(RoleNeed('default'))
 
 
-########################## Flask-Restful extension #########################
+# ******************* Flask-Restful extension ******************************** #
 
 rest_api = Api()
 
 
-########################## Flask-Celery-Helper extension #########################
+# ******************* Flask-Celery-Helper extension ************************** #
 
 celery = Celery()
+
+
+# ******************* Flask-DebugToolbarExtension extension ****************** #
+
+debug_toolbar = DebugToolbarExtension()
