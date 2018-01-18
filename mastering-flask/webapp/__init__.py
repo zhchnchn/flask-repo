@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 from flask import Flask
 from flask_login import current_user
 from flask_principal import identity_loaded, UserNeed, RoleNeed
@@ -10,7 +11,8 @@ from extensions import bcrypt, login_manager, principal, rest_api, \
     debug_toolbar, cache, assets_env, main_css, main_js, admin
 from .controllers.rest.auth import AuthApi
 from .controllers.rest.post import PostApi
-from .controllers.admin import CustomView, CustomModelView, PostView
+from .controllers.admin import CustomView, CustomModelView, PostView, \
+    CustomFileAdmin
 
 
 def create_app(object_name):
@@ -66,6 +68,12 @@ def create_app(object_name):
         admin.add_view(CustomModelView(model, db.session, category='Models'))
     # 单独处理Post model，因为我们自定了CustomModelView的自类PostView
     admin.add_view(PostView(Post, db.session, category='Models'))
+
+    admin.add_view(CustomFileAdmin(
+        os.path.join(os.path.dirname(__file__), 'static'),
+        '/static/',
+        name='Static Files'
+    ))
 
     # init RestApi
     rest_api.add_resource(PostApi, '/api/post', '/api/post/<int:post_id>',

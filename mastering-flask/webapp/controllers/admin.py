@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from flask_admin import BaseView, expose
 from flask_admin.contrib.sqla import ModelView
+from flask_admin.contrib.fileadmin import FileAdmin
 from ..forms import CKTextAreaField
 
 
@@ -24,3 +25,7 @@ class PostView(CustomModelView):
     column_filters = ('publish_date', )
     create_template = 'admin/post_edit.html'
     edit_template = 'admin/post_edit.html'
+
+
+class CustomFileAdmin(FileAdmin):
+    pass
