@@ -7,9 +7,10 @@ from controllers.main import main_blueprint
 from controllers.auth import auth_blueprint
 from models import db
 from extensions import bcrypt, login_manager, principal, rest_api, \
-    debug_toolbar, cache, assets_env, main_css, main_js
+    debug_toolbar, cache, assets_env, main_css, main_js, admin
 from .controllers.rest.auth import AuthApi
 from .controllers.rest.post import PostApi
+from .controllers.admin import CustomView
 
 
 def create_app(object_name):
@@ -56,6 +57,9 @@ def create_app(object_name):
     assets_env.register("main_css", main_css)
     assets_env.register("main_js", main_js)
 
+    # init Flask-Admin
+    admin.init_app(app)
+    admin.add_view(CustomView(name='Custom'))
 
     # init RestApi
     rest_api.add_resource(PostApi, '/api/post', '/api/post/<int:post_id>',

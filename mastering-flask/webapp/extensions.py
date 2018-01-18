@@ -11,6 +11,7 @@ from flask_celery import Celery
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_cache import Cache
 from flask_assets import Environment, Bundle
+from flask_admin import Admin
 
 
 # ******************* Flask-Bcrypt extension ********************************* #
@@ -81,3 +82,9 @@ main_js = Bundle(
     filters='jsmin',
     output='js/common.js'
 )
+
+
+# ******************* Flask-Admin extension ********************************** #
+
+admin = Admin()
+
