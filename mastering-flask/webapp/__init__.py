@@ -5,12 +5,12 @@ from flask_principal import identity_loaded, UserNeed, RoleNeed
 from controllers.blog import blog_blueprint
 from controllers.main import main_blueprint
 from controllers.auth import auth_blueprint
-from models import db
+from models import db, User, Role, Post, Comment, Tag
 from extensions import bcrypt, login_manager, principal, rest_api, \
     debug_toolbar, cache, assets_env, main_css, main_js, admin
 from .controllers.rest.auth import AuthApi
 from .controllers.rest.post import PostApi
-from .controllers.admin import CustomView
+from .controllers.admin import CustomView, CustomModelView
 
 
 def create_app(object_name):
@@ -60,6 +60,10 @@ def create_app(object_name):
     # init Flask-Admin
     admin.init_app(app)
     admin.add_view(CustomView(name='Custom'))
+
+    models = [User, Role, Post, Comment, Tag]
+    for model in models:
+        admin.add_view(CustomModelView(model, db.session, category='Models'))
 
     # init RestApi
     rest_api.add_resource(PostApi, '/api/post', '/api/post/<int:post_id>',

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask_admin import BaseView, expose
+from flask_admin.contrib.sqla import ModelView
 
 
 class CustomView(BaseView):
@@ -10,4 +11,9 @@ class CustomView(BaseView):
     @expose('/second_page')
     def second_page(self):
         return self.render('admin/second_page.html')
+
+
+class CustomModelView(ModelView):
+    pass
+
 
