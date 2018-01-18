@@ -30,11 +30,13 @@ class TestUI(unittest.TestCase):
         password_field = self.driver.find_element_by_name("password")
         password_field.send_keys("test")
 
-        login_button = self.driver.find_element_by_id("login_button")   #_by_xpath(".//*[@value='Login']")
+        # login_button = self.driver.find_element_by_id("login_button")
+        login_button = self.driver.find_element_by_xpath(".//*[@value='Login']")
         login_button.click()
 
         # 填写表单
         self.driver.get("http://localhost:5000/blog/new")
+        self.driver.implicitly_wait(10)
 
         title_field = self.driver.find_element_by_name("title")
         title_field.send_keys("Test Title")
