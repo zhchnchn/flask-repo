@@ -10,7 +10,7 @@ from extensions import bcrypt, login_manager, principal, rest_api, \
     debug_toolbar, cache, assets_env, main_css, main_js, admin
 from .controllers.rest.auth import AuthApi
 from .controllers.rest.post import PostApi
-from .controllers.admin import CustomView, CustomModelView
+from .controllers.admin import CustomView, CustomModelView, PostView
 
 
 def create_app(object_name):
@@ -61,9 +61,11 @@ def create_app(object_name):
     admin.init_app(app)
     admin.add_view(CustomView(name='Custom'))
 
-    models = [User, Role, Post, Comment, Tag]
+    models = [User, Role, Comment, Tag]
     for model in models:
         admin.add_view(CustomModelView(model, db.session, category='Models'))
+    # 单独处理Post model，因为我们自定了CustomModelView的自类PostView
+    admin.add_view(PostView(Post, db.session, category='Models'))
 
     # init RestApi
     rest_api.add_resource(PostApi, '/api/post', '/api/post/<int:post_id>',

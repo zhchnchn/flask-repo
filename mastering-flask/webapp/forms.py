@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 from flask_wtf import FlaskForm
 # from flask_wtf import RecaptchaField
-from wtforms import StringField, TextAreaField, PasswordField, BooleanField
+from wtforms import StringField, TextAreaField, PasswordField, BooleanField, \
+    widgets
 from wtforms.validators import DataRequired, Length, EqualTo
 from models import User
 
 
-################## for blog_blueprint #######################
+# ******************* blog_blueprint forms *********************************** #
 
 class CommentForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired(), Length(max=255)])
@@ -18,7 +19,7 @@ class PostForm(FlaskForm):
     text = TextAreaField('Content', [DataRequired()])
 
 
-################## for auth_blueprint #######################
+# ******************* auth_blueprint forms *********************************** #
 
 class LoginForm(FlaskForm):
     username = StringField('Username', [DataRequired(), Length(max=255)])
@@ -67,5 +68,13 @@ class RegisterForm(FlaskForm):
         return True
 
 
+# ******************* Flask-Admin forms ************************************** #
+
+class CKTextAreaWidget(widgets.TextArea):
+    def __call__(self, field, **kwargs):
+        kwargs.setdefault('class_', 'ckeditor')
+        return super(CKTextAreaWidget, self).__call__(field, **kwargs)
 
 
+class CKTextAreaField(TextAreaField):
+    widget = CKTextAreaWidget()
