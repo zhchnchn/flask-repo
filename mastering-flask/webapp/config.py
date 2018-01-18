@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import datetime
+import tempfile
 
 from celery.schedules import crontab
 
@@ -60,7 +61,35 @@ class DevConfig(Config):
     CACHE_REDIS_PORT = '6379'
     # CACHE_REDIS_PASSWORD = 'password'
     CACHE_REDIS_DB = '0'
+    # 当使用的缓存类型为null时，不让抛出警告信息
+    CACHE_NO_NULL_WARNING = True
 
     # Flask_Assets
+    # 在开发环境中不要编译库文件
+    ASSETS_DEBUG = True
+
+
+class TestConfig(Config):
+    db_file = tempfile.NamedTemporaryFile()
+
+    DEBUG = True
+    # 关闭Flask Debugtoolbar
+    DEBUG_TB_ENABLED = False
+
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + db_file.name
+    SQLALCHEMY_TRACK_MODIFICATIONS = True
+
+    CELERY_BROKER_URL = "amqp://guest:guest@localhost:5672//"
+    CELERY_BACKEND_URL = "amqp://guest:guest@localhost:5672//"
+
+    CACHE_TYPE = 'null'
+    # 当使用的缓存类型为null时，不让抛出警告信息
+    CACHE_NO_NULL_WARNING = True
+
+    # WTForms不进行CSRF检查
+    WTF_CSRF_ENABLED = False
+
+    # Flask_Assets
+    # 在测试环境中不要编译库文件
     ASSETS_DEBUG = True
 
