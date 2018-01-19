@@ -12,6 +12,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from flask_cache import Cache
 from flask_assets import Environment, Bundle
 from flask_admin import Admin
+from flask_bootstrap import Bootstrap
 
 
 # ******************* Flask-Bcrypt extension ********************************* #
@@ -87,4 +88,9 @@ main_js = Bundle(
 # ******************* Flask-Admin extension ********************************** #
 
 admin = Admin()
+
+
+# ******************* Flask-Bootstrap extension ********************************** #
+
+bootstrap = Bootstrap()
 

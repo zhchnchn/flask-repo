@@ -8,7 +8,7 @@ from controllers.main import main_blueprint
 from controllers.auth import auth_blueprint
 from models import db, User, Role, Post, Comment, Tag
 from extensions import bcrypt, login_manager, principal, rest_api, \
-    debug_toolbar, cache, assets_env, main_css, main_js, admin
+    debug_toolbar, cache, assets_env, main_css, main_js, admin, bootstrap
 from .controllers.rest.auth import AuthApi
 from .controllers.rest.post import PostApi
 from .controllers.admin import CustomView, CustomModelView, PostView, \
@@ -74,6 +74,9 @@ def create_app(object_name):
         '/static/',
         name='Static Files'
     ))
+
+    # init Flask-Bootstrap
+    bootstrap.init_app(app)
 
     # init RestApi
     rest_api.add_resource(PostApi, '/api/post', '/api/post/<int:post_id>',
