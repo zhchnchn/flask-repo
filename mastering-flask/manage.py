@@ -86,5 +86,13 @@ def insert_data():
     db.session.commit()
 
 
+@manager.command
+def test():
+    """Run the unit tests in the tests/unit folder."""
+    import unittest
+    tests = unittest.TestLoader().discover('tests/unit')
+    unittest.TextTestRunner(verbosity=2).run(tests)
+
+
 if __name__ == '__main__':
     manager.run()

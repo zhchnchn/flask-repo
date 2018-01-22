@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# from __future__ import absolute_import
 import unittest
 from webapp import create_app
 from webapp.models import db, User, Role
@@ -13,37 +12,40 @@ class TestUrls(unittest.TestCase):
         admin._views = []
         rest_api.resources = []
 
-        app = create_app('test')
-        self.client = app.test_client()
+        self.app = create_app('test')
+        # 必须push context，否则会报错误
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        self.client = self.app.test_client()
 
         # Bug workaround: 如果不在webapp目录中运行，
         # 则Flask SQLAlchemy的初始化代码就不能正确地在应用对象中进行初始化
-        db.app = app
+        db.app = self.app
         db.create_all()
+
+        # create role and user
+        poster = Role('poster')
+        db.session.add(poster)
+
+        test_user = User('test')
+        test_user.set_password('test')
+        test_user.roles.append(poster)
+        db.session.add(test_user)
+        db.session.commit()
 
     def tearDown(self):
         db.session.remove()
         db.drop_all()
+        self.app_context.pop()
 
     def test_root_redirect(self):
         """ Tests if the root URL gives a 302 """
-
         result = self.client.get('/')
         self.assertEqual(result.status_code, 302)
         self.assertIn("/blog/", result.headers['Location'])
 
     def test_login(self):
         """ Tests if the login form works correctly """
-
-        test_role = Role('default')
-        db.session.add(test_role)
-        db.session.commit()
-
-        test_user = User('test')
-        test_user.set_password('test')
-        db.session.add(test_user)
-        db.session.commit()
-
         result = self.client.post(
             '/auth/login',
             data=dict(username='test', password='test'),
@@ -54,16 +56,6 @@ class TestUrls(unittest.TestCase):
 
     def test_logout(self):
         """ Tests if the logout form works correctly """
-
-        test_role = Role('default')
-        db.session.add(test_role)
-        db.session.commit()
-
-        test_user = User('test')
-        test_user.set_password('test')
-        db.session.add(test_user)
-        db.session.commit()
-
         result = self.client.post(
             '/auth/login',
             data=dict(username='test', password='test'),
