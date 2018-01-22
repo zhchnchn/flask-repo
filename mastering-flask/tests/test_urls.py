@@ -13,7 +13,7 @@ class TestUrls(unittest.TestCase):
         admin._views = []
         rest_api.resources = []
 
-        app = create_app('webapp.config.TestConfig')
+        app = create_app('test')
         self.client = app.test_client()
 
         # Bug workaround: 如果不在webapp目录中运行，

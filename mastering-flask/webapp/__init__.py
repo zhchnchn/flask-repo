@@ -13,19 +13,20 @@ from .controllers.rest.auth import AuthApi
 from .controllers.rest.post import PostApi
 from .controllers.admin import CustomView, CustomModelView, PostView, \
     CustomFileAdmin
+from .config import config
 
 
-def create_app(object_name):
+def create_app(config_name):
     """
     An flask application factory, as explained here:
     http://flask.pocoo.org/docs/patterns/appfactories/
     Arguments:
-        object_name: the python path of the config object,
-                     e.g. webapp.config.DevConfig
+        config_name: the key value if the config.config dict,
+                     e.g. 'dev', 'test', 'product', 'default'
     """
 
     app = Flask(__name__)
-    app.config.from_object(object_name)
+    app.config.from_object(config[config_name])
 
     # init SQLAlchemy
     db.init_app(app)
@@ -93,5 +94,5 @@ def create_app(object_name):
 
 
 if __name__ == '__main__':
-    app = create_app('webapp.config.DevConfig')
+    app = create_app('default')
     app.run()

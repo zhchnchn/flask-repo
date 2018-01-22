@@ -9,9 +9,8 @@ from webapp import create_app
 from webapp.models import db, User, Post, Tag, Comment, Role
 
 
-# 默认使用 Dev 配置
-env = os.environ.get('WEBAPP_ENV', 'Dev')
-app = create_app('webapp.config.{}Config'.format(env.capitalize()))
+# 默认使用 default 配置
+app = create_app(os.environ.get('FLASK_CONFIG', 'default'))
 
 migrate = Migrate(app, db)
 manager = Manager(app)

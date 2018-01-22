@@ -93,3 +93,10 @@ class TestConfig(Config):
     # 在测试环境中不要编译库文件
     ASSETS_DEBUG = True
 
+
+config = {
+    'dev': DevConfig,
+    'test': TestConfig,
+    'product': ProductConfig,
+    'default': DevConfig
+}

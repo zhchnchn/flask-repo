@@ -3,6 +3,5 @@ import os
 from webapp import create_app
 
 
-# 默认使用 Dev 配置
-env = os.environ.get('WEBAPP_ENV', 'Dev')
-application = create_app('webapp.config.{}Config'.format(env.capitalize()))
+# 默认使用 default 配置
+application = create_app(os.environ.get('FLASK_CONFIG', 'default'))

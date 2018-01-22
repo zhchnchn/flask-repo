@@ -5,7 +5,7 @@
 from webapp import create_app
 from webapp.models import db, User, Role
 
-app = create_app('webapp.config.TestConfig')
+app = create_app('test')
 
 # Bug workaround
 db.app = app

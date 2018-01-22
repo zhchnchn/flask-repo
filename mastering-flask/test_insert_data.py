@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 import random
 import datetime
+import os
 
 from flask import Flask
 from webapp.models import User, Tag, Post, db, Role
+from webapp.config import config
 
 
 # 解决如下错误:
@@ -12,7 +14,7 @@ from webapp.models import User, Tag, Post, db, Role
 # 由于该模块是独立运行的，而db.session需要在Flask的应用上下文中才能执行，
 # 所以我们首先创建了一个Flask app, 然后使用该app的应用上下文
 app = Flask(__name__)
-app.config.from_object('webapp.config.DevConfig')
+app.config.from_object(config['default'])
 db.init_app(app)
 
 
