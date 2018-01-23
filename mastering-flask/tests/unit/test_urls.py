@@ -4,7 +4,7 @@ from webapp import create_app
 from webapp.models import db, User, Role
 from webapp.extensions import admin, rest_api
 
-class TestUrls(unittest.TestCase):
+class UrlsTestCase(unittest.TestCase):
 
     def setUp(self):
         # Bug workarounds: Flask Admin和Flask Restful扩展中，
