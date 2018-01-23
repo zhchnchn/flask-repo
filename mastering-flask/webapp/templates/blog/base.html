@@ -47,7 +47,15 @@
     <div class="container">
         <div class="jumbotron">
             <h1><a href="{{ url_for('.home', _external=True) }}">My Blog</a></h1>
-            <p>Welcome to the blog!</p>
+
+            <p>Hello,
+            {% if current_user.is_authenticated %}
+                {{ current_user.username }},
+            {% else %}
+                Stranger,
+            {% endif %}
+            Welcome to the blog!
+            </p>
         </div>
 
         {% with messages = get_flashed_messages(with_categories=true) %}

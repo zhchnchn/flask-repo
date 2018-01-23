@@ -23,7 +23,7 @@ class UiTestCase(unittest.TestCase):
         # 登录
         self.driver.get("http://localhost:5000/auth/login")
 
-        username_field = self.driver.find_element_by_name("username")
+        username_field = self.driver.find_element_by_name("username_or_email")
         username_field.send_keys("test")
 
         password_field = self.driver.find_element_by_name("password")

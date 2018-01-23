@@ -30,6 +30,8 @@ class User(UserMixin, db.Model):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer(), primary_key=True)
+    # 添加email字段，用户也可以使用电子邮件地址登录
+    email = db.Column(db.String(64), unique=True, index=True)
     username = db.Column(db.String(255))
     password_hash = db.Column(db.String(255))
     posts = db.relationship('Post', backref='user', lazy='dynamic')

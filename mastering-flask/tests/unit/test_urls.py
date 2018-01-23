@@ -28,6 +28,7 @@ class UrlsTestCase(unittest.TestCase):
         db.session.add(poster)
 
         test_user = User('test')
+        test_user.email = 'test@163.com'
         test_user.password = 'test'
         test_user.roles.append(poster)
         db.session.add(test_user)
@@ -44,11 +45,21 @@ class UrlsTestCase(unittest.TestCase):
         self.assertEqual(result.status_code, 302)
         self.assertIn("/blog/", result.headers['Location'])
 
-    def test_login(self):
-        """ Tests if the login form works correctly """
+    def test_login_with_username(self):
+        """ Tests if the login with username works correctly """
         result = self.client.post(
             '/auth/login',
             data=dict(username='test', password='test'),
+            follow_redirects=False  # 不追踪跳转
+        )
+
+        self.assertEqual(result.status_code, 302)
+
+    def test_login_with_email(self):
+        """ Tests if the login with email works correctly """
+        result = self.client.post(
+            '/auth/login',
+            data=dict(email='test@163.com', password='test'),
             follow_redirects=False  # 不追踪跳转
         )
 

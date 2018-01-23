@@ -12,8 +12,18 @@ from . import auth_blueprint
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).one()
-        login_user(user)
+        user = User.query.filter_by(
+            username=form.username_or_email.data).first()
+        if user is not None:
+            # login_user()函数的参数是要登录的用户，以及可选的“记住我”布尔值
+            login_user(user, form.remember.data)
+        else:
+            user = User.query.filter_by(
+                email=form.username_or_email.data).first()
+            # 不需要判断，LoginForm的validate函数会做检验，上面对username之所以判断
+            # 是由于如果username不存在，还要检测email是否存在
+            # if user is not None:
+            login_user(user, form.remember.data)
 
         # identity changed
         identity_changed.send(current_app._get_current_object(),
