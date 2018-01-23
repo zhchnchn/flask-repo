@@ -2,8 +2,6 @@
 from wtforms import TextAreaField, widgets
 
 
-# ******************* Flask-Admin forms ************************************** #
-
 class CKTextAreaWidget(widgets.TextArea):
     def __call__(self, field, **kwargs):
         kwargs.setdefault('class_', 'ckeditor')

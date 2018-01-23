@@ -3,8 +3,8 @@ from flask_admin import BaseView, expose
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.contrib.fileadmin import FileAdmin
 from flask_login import login_required, current_user
-from ..extensions import admin_permission
-from ..forms import CKTextAreaField
+from ...extensions import admin_permission
+from .forms import CKTextAreaField
 
 
 class CustomView(BaseView):
