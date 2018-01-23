@@ -17,6 +17,9 @@ class Config(object):
 
 
 class ProductConfig(Config):
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir,
+                                                          os.path.pardir,
+                                                          'data-product.sqlite')
     pass
 
 
@@ -32,7 +35,7 @@ class DevConfig(Config):
     # os.path.pardir 返回系统的父目录的表示形式，Linux下为".."
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir,
                                                           os.path.pardir,
-                                                          'data.sqlite')
+                                                          'data-dev.sqlite')
     SQLALCHEMY_COMMIT_ON_TERDOWN = True
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     # 将ORM操作转为对应的SQL语句并显示

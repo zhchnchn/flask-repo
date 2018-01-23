@@ -1,15 +1,11 @@
 # -*- coding: utf-8 -*-
-from flask import Blueprint, redirect, request, url_for, flash, \
+from flask import redirect, request, url_for, flash, \
     render_template, current_app
 from flask_login import login_user, logout_user
 from flask_principal import Identity, AnonymousIdentity, identity_changed
-from ..forms import LoginForm, RegisterForm
-from ..models import db, User
-
-
-auth_blueprint = Blueprint('auth', __name__,
-                           template_folder='../templates/auth',
-                           url_prefix='/auth')
+from .forms import LoginForm, RegisterForm
+from ...models import db, User
+from . import auth_blueprint
 
 
 @auth_blueprint.route('/login', methods=['GET', 'POST'])

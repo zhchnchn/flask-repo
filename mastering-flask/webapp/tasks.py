@@ -3,7 +3,7 @@ import time
 import smtplib
 from email.mime.text import MIMEText
 from .extensions import celery
-from .controllers.blog import digest_func
+from .controllers.blog.views import digest_func
 
 
 @celery.task()

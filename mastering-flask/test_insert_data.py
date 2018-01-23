@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 import random
 import datetime
-import os
-
 from flask import Flask
 from webapp.models import User, Tag, Post, db, Role
 from webapp.config import config

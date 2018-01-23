@@ -3,12 +3,12 @@ import os
 from flask import Flask
 from flask_login import current_user
 from flask_principal import identity_loaded, UserNeed, RoleNeed
-from controllers.blog import blog_blueprint
-from controllers.main import main_blueprint
-from controllers.auth import auth_blueprint
 from models import db, User, Role, Post, Comment, Tag
 from extensions import bcrypt, login_manager, principal, rest_api, \
     debug_toolbar, cache, assets_env, main_css, main_js, admin, bootstrap
+from .controllers.blog import blog_blueprint
+from .controllers.main import main_blueprint
+from .controllers.auth import auth_blueprint
 from .controllers.rest.auth import AuthApi
 from .controllers.rest.post import PostApi
 from .controllers.admin import CustomView, CustomModelView, PostView, \

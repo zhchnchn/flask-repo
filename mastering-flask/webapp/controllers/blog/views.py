@@ -1,20 +1,14 @@
 # -*- coding: utf-8 -*-
 import datetime
-import os
-
-from flask import render_template, redirect, url_for, Blueprint, abort
+from flask import render_template, redirect, url_for, abort
 from flask_login import login_required, current_user
 from flask_principal import Permission, UserNeed
 from sqlalchemy import func, desc
-from ..models import db, Post, Tag, posts_tags_table, Comment, User
-from ..forms import CommentForm, PostForm
-from ..extensions import admin_permission, poster_permission, cache
+from ...models import db, Post, Tag, posts_tags_table, Comment, User
+from .forms import CommentForm, PostForm
+from ...extensions import admin_permission, poster_permission, cache
+from . import blog_blueprint
 
-blog_blueprint = Blueprint('blog', __name__,
-                           # template_folder='../templates/blog'
-                           template_folder=os.path.join(
-                               os.path.pardir, 'templates', 'blog'),
-                           url_prefix='/blog')
 
 @cache.cached(timeout=7200, key_prefix='sidebar_data')
 def sidebar_data():
@@ -173,4 +167,3 @@ def digest_func():
         return None
 
     return render_template("digest.html", posts=posts)
-
