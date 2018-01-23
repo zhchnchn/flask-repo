@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask import current_app
-from flask_login import AnonymousUserMixin
+from flask_login import AnonymousUserMixin, UserMixin
 from flask_sqlalchemy import SQLAlchemy
 from extensions import bcrypt, cache
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer, \
@@ -26,7 +26,7 @@ roles_users_table = db.Table(
 )
 
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer(), primary_key=True)
@@ -52,25 +52,6 @@ class User(db.Model):
 
     def check_password(self, password):
         return bcrypt.check_password_hash(self.password_hash, password)
-
-    @property
-    def is_authenticated(self):
-        if isinstance(self, AnonymousUserMixin):
-            return False
-        return True
-
-    @property
-    def is_active(self):
-        return True
-
-    @property
-    def is_anonymous(self):
-        if isinstance(self, AnonymousUserMixin):
-            return True
-        return False
-
-    def get_id(self):
-        return unicode(self.id)
 
     @staticmethod
     @cache.memoize(timeout=60)
