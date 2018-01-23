@@ -28,7 +28,7 @@ class TestUrls(unittest.TestCase):
         db.session.add(poster)
 
         test_user = User('test')
-        test_user.set_password('test')
+        test_user.password = 'test'
         test_user.roles.append(poster)
         db.session.add(test_user)
         db.session.commit()

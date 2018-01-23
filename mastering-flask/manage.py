@@ -45,20 +45,20 @@ def insert_data():
 
     # add User
     admin = User(username='admin')
-    admin.set_password("admin")
+    admin.password = 'admin'
     admin.roles.append(role_admin)
     admin.roles.append(role_poster)
     admin.roles.append(role_default)
     db.session.add(admin)
 
     user01 = User(username='user01')
-    user01.set_password('test01')
+    user01.password = 'test01'
     user01.roles.append(role_poster)
     user01.roles.append(role_default)
     db.session.add(user01)
 
     user02 = User(username='user02')
-    user02.set_password('test02')
+    user02.password = 'test02'
     user02.roles.append(role_poster)
     user02.roles.append(role_default)
     db.session.add(user02)

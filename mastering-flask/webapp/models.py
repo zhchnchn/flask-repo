@@ -31,7 +31,7 @@ class User(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True)
     username = db.Column(db.String(255))
-    password = db.Column(db.String(255))
+    password_hash = db.Column(db.String(255))
     posts = db.relationship('Post', backref='user', lazy='dynamic')
     roles = db.relationship('Role', secondary=roles_users_table,
                             backref=db.backref('users', lazy='dynamic'))
@@ -42,11 +42,16 @@ class User(db.Model):
     def __repr__(self):
         return "<User, '{}'>".format(self.username)
 
-    def set_password(self, password):
-        self.password = bcrypt.generate_password_hash(password)
+    @property
+    def password(self):
+        raise AttributeError('password is not a readable attribute')
+
+    @password.setter
+    def password(self, password):
+        self.password_hash = bcrypt.generate_password_hash(password)
 
     def check_password(self, password):
-        return bcrypt.check_password_hash(self.password, password)
+        return bcrypt.check_password_hash(self.password_hash, password)
 
     @property
     def is_authenticated(self):
