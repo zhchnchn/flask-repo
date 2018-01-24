@@ -80,6 +80,28 @@ class UserModelTestCase(unittest.TestCase):
         time.sleep(2)
         self.assertFalse(user.confirm(token))
 
+    def test_valid_reset_token(self):
+        user = User('test')
+        user.password = 'cat'
+        db.session.add(user)
+        # 只有commit了才能拿到id，以便生成token
+        db.session.commit()
+        token = user.generate_reset_token()
+        self.assertTrue(user.reset_password(token, 'dog'))
+        self.assertTrue(user.check_password('dog'))
+
+    def test_invalid_reset_token(self):
+        user1 = User('test1')
+        user2 = User('test2')
+        user1.password = 'cat'
+        user2.password = 'dog'
+        db.session.add(user1)
+        db.session.add(user2)
+        db.session.commit()
+        token = user1.generate_reset_token()
+        self.assertFalse(user2.reset_password(token, 'puppy'))
+        self.assertTrue(user2.check_password('dog'))
+
 
 if __name__ == '__main__':
     unittest.main()
