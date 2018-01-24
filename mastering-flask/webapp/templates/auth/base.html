@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>
         {% block title %}Home{% endblock %}
     </title>
@@ -32,6 +32,13 @@
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
                         <li><a href="{{ url_for('main.index') }}">Home</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        {% if current_user.is_authenticated %}
+                        <li><a href="{{ url_for('auth.logout') }}">Log Out </a></li>
+                        {% else %}
+                        <li><a href="{{ url_for('auth.login') }}">Log In </a></li>
+                        {% endif %}
                     </ul>
                 </div>
             </div>
