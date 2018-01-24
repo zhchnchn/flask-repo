@@ -2,7 +2,8 @@
 from flask_wtf import FlaskForm
 # from flask_wtf import RecaptchaField
 from wtforms import StringField, PasswordField, BooleanField
-from wtforms.validators import DataRequired, Length, EqualTo
+from wtforms.validators import DataRequired, Length, EqualTo, Email, Regexp, \
+    ValidationError
 from ...models import User
 
 
@@ -40,24 +41,37 @@ class LoginForm(FlaskForm):
 
 
 class RegisterForm(FlaskForm):
-    username = StringField('Username', [DataRequired(), Length(max=255)])
-    password = PasswordField('Password', [DataRequired(), Length(min=3)])
-    # EqualTo参数：需要确认的字段的变量名，以字符串的形式提供
-    confirm = PasswordField('Confirm Password',
-                            [DataRequired(), EqualTo('password')])
+    email = StringField(
+        'Email',
+        validators=[DataRequired(), Length(1, 64), Email()])
+    username = StringField(
+        'Username',
+        validators=[
+            DataRequired(),
+            Length(max=255),
+            Regexp('^[A-Za-z][A-Za-z0-9_.]*$', 0,
+                   'Usernames must have only letters, '
+                   'numbers, dots or underscores')
+        ]
+    )
+    password = PasswordField(
+        'Password',
+        validators=[DataRequired(), Length(min=3)])
+    confirm = PasswordField(
+        'Confirm Password',
+        validators=[
+            DataRequired(),
+            # EqualTo参数：需要确认的字段的变量名，以字符串的形式提供
+            EqualTo('password', message='Passwords must match.')
+        ]
+    )
     # recaptcha = RecaptchaField()
 
-    def validate(self):
-        check_validate = super(RegisterForm, self).validate()
+    def validate_email(self, field):
+        if User.query.filter_by(email=field.data).first():
+            raise ValidationError('Email already registered.')
 
-        if not check_validate:
-            return False
-
-        # check whether the username already being used or not
-        user = User.query.filter_by(username=self.username.data).first()
-        if user:
-            self.username.errors.append('User already exists with same name')
-            return False
-
-        return True
+    def validate_username(self, field):
+        if User.query.filter_by(username=field.data).first():
+            raise ValidationError('Username already in use.')
 
