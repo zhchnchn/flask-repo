@@ -4,7 +4,7 @@ from flask import redirect, request, url_for, flash, \
 from flask_login import login_user, logout_user, login_required, current_user
 from flask_principal import Identity, AnonymousIdentity, identity_changed
 from .forms import LoginForm, RegisterForm, ChangepasswordForm, \
-    PasswordResetRequestForm, PasswordResetForm
+    PasswordResetRequestForm, PasswordResetForm, ChangeEmailForm
 from ...models import db, User
 from ...email import send_email
 from . import auth_blueprint
@@ -177,3 +177,32 @@ def password_reset(token):
             return redirect(url_for('blog.home'))
 
     return render_template('password_reset.html', token=token, form=form)
+
+
+@auth_blueprint.route('/change-email', methods=['GET', 'POST'])
+@login_required
+def change_email_request():
+    form = ChangeEmailForm()
+    if form.validate_on_submit():
+        if current_user.check_password(form.password.data):
+            new_email = form.email.data
+            token = current_user.generate_email_change_token(new_email)
+            send_email(new_email, 'Confirm your email address',
+                       'auth/email/change_email',
+                       user=current_user, token=token)
+            flash('An email with instructions to confirm your new email '
+                  'address has been sent to you.', category='success')
+            return redirect(url_for('blog.home'))
+        else:
+            flash('Invalid password.', category='warning')
+    return render_template("change_email.html", form=form)
+
+
+@auth_blueprint.route('/change-email/<token>')
+@login_required
+def change_email(token):
+    if current_user.change_email(token):
+        flash('Your email address has been updated.', category='success')
+    else:
+        flash('Invalid request.', category='warning')
+    return redirect(url_for('blog.home'))

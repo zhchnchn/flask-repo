@@ -102,6 +102,44 @@ class UserModelTestCase(unittest.TestCase):
         self.assertFalse(user2.reset_password(token, 'puppy'))
         self.assertTrue(user2.check_password('dog'))
 
+    def test_valid_email_change_token(self):
+        user1 = User('test1')
+        user1.email = 'test1@163.com'
+        user1.password = 'cat'
+        db.session.add(user1)
+        db.session.commit()
+        token = user1.generate_email_change_token('test1@example.com')
+        self.assertTrue(user1.change_email(token))
+        self.assertTrue(user1.email == 'test1@example.com')
+
+    def test_invalid_email_change_token(self):
+        user1 = User('test1')
+        user1.email = 'test1@163.com'
+        user1.password = 'cat'
+        user2 = User('test2')
+        user2.email = 'test2@163.com'
+        user2.password = 'dog'
+        db.session.add(user1)
+        db.session.add(user2)
+        db.session.commit()
+        token = user1.generate_email_change_token('test1@example.com')
+        self.assertFalse(user2.change_email(token))
+        self.assertTrue(user2.email == 'test2@163.com')
+
+    def test_duplicate_email_change_token(self):
+        user1 = User('test1')
+        user1.email = 'test1@163.com'
+        user1.password = 'cat'
+        user2 = User('test2')
+        user2.email = 'test2@163.com'
+        user2.password = 'dog'
+        db.session.add(user1)
+        db.session.add(user2)
+        db.session.commit()
+        token = user2.generate_email_change_token('test1@163.com')
+        self.assertFalse(user2.change_email(token))
+        self.assertTrue(user2.email == 'test2@163.com')
+
 
 if __name__ == '__main__':
     unittest.main()
