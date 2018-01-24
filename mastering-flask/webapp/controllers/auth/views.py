@@ -21,7 +21,7 @@ def before_request():
             and request.endpoint \
             and request.endpoint[:5] != 'auth.' \
             and request.endpoint != 'static':
-        return redirect(url_for('.unconfirmed'))
+        return redirect(url_for('auth.unconfirmed'))
 
 
 @auth_blueprint.route('/unconfirmed')
@@ -101,9 +101,9 @@ def confirm(token):
         return redirect(url_for('blog.home'))
 
     if current_user.confirm(token):
-        flash('You have confirmed your account. Thanks!')
+        flash('You have confirmed your account. Thanks!', category="success")
     else:
-        flash('The confirmation link is invalid or has expired.')
+        flash('The confirmation link is invalid or has expired.', category="success")
 
     return redirect(url_for('blog.home'))
 
@@ -115,5 +115,5 @@ def resend_confirmation():
     token = current_user.generate_confirmation_token()
     send_email(current_user.email, 'Confirm Your Account', 'auth/email/confirm',
                user=current_user, token=token)
-    flash('A new confirmation email has been sent to you by email.')
+    flash('A new confirmation email has been sent to you by email.', category="success")
     return redirect(url_for('blog.home'))

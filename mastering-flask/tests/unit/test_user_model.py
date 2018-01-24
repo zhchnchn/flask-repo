@@ -55,6 +55,7 @@ class UserModelTestCase(unittest.TestCase):
         user = User('test')
         user.password = 'cat'
         db.session.add(user)
+        # 只有commit了才能拿到id，以便生成token
         db.session.commit()
         token = user.generate_confirmation_token()
         self.assertTrue(user.confirm(token))

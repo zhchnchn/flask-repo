@@ -34,20 +34,26 @@ def insert_data():
 
         # add User
         admin = User(username='admin')
+        admin.email = 'admin@163.com'
         admin.password = 'admin'
+        admin.confirmed = True
         admin.roles.append(role_admin)
         admin.roles.append(role_poster)
         admin.roles.append(role_default)
         db.session.add(admin)
 
         user01 = User(username='user01')
+        user01.email = 'user01@163.com'
         user01.password = 'test01'
+        user01.confirmed = True
         user01.roles.append(role_poster)
         user01.roles.append(role_default)
         db.session.add(user01)
 
         user02 = User(username='user02')
-        user02.password = 'test02'
+        user01.email = 'user02@163.com'
+        user01.password = 'test02'
+        user01.confirmed = True
         user02.roles.append(role_poster)
         user02.roles.append(role_default)
         db.session.add(user02)
