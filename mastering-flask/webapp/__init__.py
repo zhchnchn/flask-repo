@@ -5,7 +5,7 @@ from flask_login import current_user
 from flask_principal import identity_loaded, UserNeed, RoleNeed
 from models import db, User, Role, Post, Comment, Tag
 from extensions import bcrypt, login_manager, principal, rest_api, \
-    debug_toolbar, cache, assets_env, main_css, main_js, admin, bootstrap
+    debug_toolbar, cache, assets_env, main_css, main_js, admin, bootstrap, mail
 from .controllers.blog import blog_blueprint
 from .controllers.main import main_blueprint
 from .controllers.auth import auth_blueprint
@@ -78,6 +78,9 @@ def create_app(config_name):
 
     # init Flask-Bootstrap
     bootstrap.init_app(app)
+
+    # init Flask-Mail
+    mail.init_app(app)
 
     # init RestApi
     rest_api.add_resource(PostApi, '/api/post', '/api/post/<int:post_id>',

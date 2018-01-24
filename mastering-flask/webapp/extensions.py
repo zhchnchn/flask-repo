@@ -13,6 +13,7 @@ from flask_cache import Cache
 from flask_assets import Environment, Bundle
 from flask_admin import Admin
 from flask_bootstrap import Bootstrap
+from flask_mail import Mail
 
 
 # ******************* Flask-Bcrypt extension ********************************* #
@@ -96,3 +97,7 @@ admin = Admin()
 
 bootstrap = Bootstrap()
 
+
+# ******************* Flask-Mail extension ********************************* #
+
+mail = Mail()

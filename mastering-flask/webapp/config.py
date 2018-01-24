@@ -67,9 +67,17 @@ class DevConfig(Config):
     # 当使用的缓存类型为null时，不让抛出警告信息
     CACHE_NO_NULL_WARNING = True
 
-    # Flask_Assets
+    # Flask-Assets
     # 在开发环境中不要编译库文件
     ASSETS_DEBUG = True
+
+    # Flask-Mail
+    MAIL_SERVER = 'smtp.163.com'
+    MAIL_PORT = 25
+    MAIL_USERNAME = 'xxx@163.com'
+    MAIL_PASSWORD = 'xxx'
+    MAIL_SUBJECT_PREFIX = '[Blog]'
+    MAIL_SENDER = 'Blog Admin <xxx@163.com>'
 
 
 class TestConfig(Config):
