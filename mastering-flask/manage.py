@@ -44,9 +44,11 @@ def insert_data():
     db.session.add(role_default)
 
     # add User
+    # add User
     admin = User(username='admin')
     admin.email = 'admin@163.com'
     admin.password = 'admin'
+    admin.confirmed = True
     admin.roles.append(role_admin)
     admin.roles.append(role_poster)
     admin.roles.append(role_default)
@@ -55,6 +57,7 @@ def insert_data():
     user01 = User(username='user01')
     user01.email = 'user01@163.com'
     user01.password = 'test01'
+    user01.confirmed = True
     user01.roles.append(role_poster)
     user01.roles.append(role_default)
     db.session.add(user01)
@@ -62,6 +65,7 @@ def insert_data():
     user02 = User(username='user02')
     user02.email = 'user02@163.com'
     user02.password = 'test02'
+    user02.confirmed = True
     user02.roles.append(role_poster)
     user02.roles.append(role_default)
     db.session.add(user02)
@@ -86,6 +90,18 @@ def insert_data():
         new_post.tags = random.sample(tag_list, random.randint(1, 3))
         db.session.add(new_post)
 
+    db.session.commit()
+
+
+@manager.command
+def clear_data():
+    db.engine.execute("delete from roles;")
+    db.engine.execute("delete from users;")
+    db.engine.execute("delete from posts;")
+    db.engine.execute("delete from tags;")
+    db.engine.execute("delete from comments;")
+    db.engine.execute("delete from posts_tags;")
+    db.engine.execute("delete from roles_users;")
     db.session.commit()
 
 

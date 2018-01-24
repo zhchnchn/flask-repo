@@ -1,44 +1,44 @@
 {% extends "auth/base.html" %}
 {% block title %}Login{% endblock %}
 {% block body %}
-    <div class="row">
-        <div class="col-md-4"></div>
-        <div class="col-md-4">
-            <h1 class="text-center">Login</h1>
-            <form method="POST" action="{{ url_for('.login', next=request.args.get('next')) }}">
-                {{ form.hidden_tag() }}
-                <div class="form-group">
-                    {{ form.username_or_email.label }}
-                    {% if form.username_or_email.errors %}
-                        {% for e in form.username_or_email.errors %}
-                            <p class="help-block">{{ e }}</p>
-                        {% endfor %}
-                    {% endif %}
-                    {{ form.username_or_email(class_='form-control') }}
-                </div>
-                <div class="form-group">
-                    {{ form.password.label }}
-                    {% if form.password.errors %}
-                        {% for e in form.password.errors %}
-                            <p class="help-block">{{ e }}</p>
-                        {% endfor %}
-                    {% endif %}
-                    {{ form.password(class_='form-control') }}
-                </div>
-                <div class="form-group">
-                    {{ form.remember.label }}
-                    {% if form.remember.errors %}
-                        {% for e in form.remember.errors %}
-                            <p class="help-block">{{ e }}</p>
-                        {% endfor %}
-                    {% endif %}
-                    {{ form.remember(class_='form-control') }}
-                </div>
-                <input class="btn btn-primary" type="submit" value="Login">
-            </form>
-            <hr>
-            <p>New user? Click here to <a href="{{ url_for('.register') }}">register</a>.</p>
-        </div>
-        <div class="col-md-4"></div>
+<div class="row">
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+        <h1 class="text-center">Login</h1>
+        <form method="POST" action="{{ url_for('.login', next=request.args.get('next')) }}">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{ form.username_or_email.label }}
+                {% if form.username_or_email.errors %}
+                    {% for e in form.username_or_email.errors %}
+                        <p class="help-block">{{ e }}</p>
+                    {% endfor %}
+                {% endif %}
+                {{ form.username_or_email(class_='form-control') }}
+            </div>
+            <div class="form-group">
+                {{ form.password.label }}
+                {% if form.password.errors %}
+                    {% for e in form.password.errors %}
+                        <p class="help-block">{{ e }}</p>
+                    {% endfor %}
+                {% endif %}
+                {{ form.password(class_='form-control') }}
+            </div>
+            <div class="form-group">
+                {{ form.remember.label }}
+                {% if form.remember.errors %}
+                    {% for e in form.remember.errors %}
+                        <p class="help-block">{{ e }}</p>
+                    {% endfor %}
+                {% endif %}
+                {{ form.remember(class_='form-control') }}
+            </div>
+            <input class="btn btn-primary" type="submit" value="Login">
+        </form>
+        <hr>
+        <p>New user? Click here to <a href="{{ url_for('.register') }}">register</a>.</p>
     </div>
+    <div class="col-md-4"></div>
+</div>
 {% endblock %}

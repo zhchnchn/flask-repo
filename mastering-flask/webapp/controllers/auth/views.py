@@ -3,7 +3,7 @@ from flask import redirect, request, url_for, flash, \
     render_template, current_app
 from flask_login import login_user, logout_user, login_required, current_user
 from flask_principal import Identity, AnonymousIdentity, identity_changed
-from .forms import LoginForm, RegisterForm
+from .forms import LoginForm, RegisterForm, ChangepasswordForm
 from ...models import db, User
 from ...email import send_email
 from . import auth_blueprint
@@ -117,3 +117,20 @@ def resend_confirmation():
                user=current_user, token=token)
     flash('A new confirmation email has been sent to you by email.', category="success")
     return redirect(url_for('blog.home'))
+
+
+@auth_blueprint.route('/change-password', methods=['GET', 'POST'])
+@login_required
+def change_password():
+    form = ChangepasswordForm()
+    if form.validate_on_submit():
+        if current_user.check_password(form.old_password.data):
+            current_user.password = form.new_password.data
+            db.session.add(current_user)
+            db.session.commit()
+            flash('Your password has been updated.', category='success')
+            return redirect(url_for('blog.home'))
+        else:
+            flash('Your password is not correct.', category='warning')
+
+    return render_template('change_password.html', form=form)

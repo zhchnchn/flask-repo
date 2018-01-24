@@ -51,9 +51,9 @@ def insert_data():
         db.session.add(user01)
 
         user02 = User(username='user02')
-        user01.email = 'user02@163.com'
-        user01.password = 'test02'
-        user01.confirmed = True
+        user02.email = 'user02@163.com'
+        user02.password = 'test02'
+        user02.confirmed = True
         user02.roles.append(role_poster)
         user02.roles.append(role_default)
         db.session.add(user02)

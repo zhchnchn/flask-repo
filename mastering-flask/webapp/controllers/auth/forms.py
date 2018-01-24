@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from flask_wtf import FlaskForm
 # from flask_wtf import RecaptchaField
-from wtforms import StringField, PasswordField, BooleanField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired, Length, EqualTo, Email, Regexp, \
     ValidationError
 from ...models import User
@@ -75,3 +75,15 @@ class RegisterForm(FlaskForm):
         if User.query.filter_by(username=field.data).first():
             raise ValidationError('Username already in use.')
 
+
+class ChangepasswordForm(FlaskForm):
+    old_password = PasswordField('Old password', validators=[DataRequired()])
+    new_password = PasswordField('New password', validators=[DataRequired()])
+    confirm_password = PasswordField(
+        'Confirm password',
+        validators=[
+            DataRequired(),
+            EqualTo('new_password', message='Passwords must match')
+        ]
+    )
+    submit = SubmitField('Update password')
