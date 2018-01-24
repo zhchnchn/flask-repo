@@ -3,7 +3,8 @@ from flask import redirect, request, url_for, flash, \
     render_template, current_app
 from flask_login import login_user, logout_user, login_required, current_user
 from flask_principal import Identity, AnonymousIdentity, identity_changed
-from .forms import LoginForm, RegisterForm, ChangepasswordForm
+from .forms import LoginForm, RegisterForm, ChangepasswordForm, \
+    PasswordResetRequestForm, PasswordResetForm
 from ...models import db, User
 from ...email import send_email
 from . import auth_blueprint
@@ -134,3 +135,45 @@ def change_password():
             flash('Your password is not correct.', category='warning')
 
     return render_template('change_password.html', form=form)
+
+
+@auth_blueprint.route('/reset', methods=['GET', 'POST'])
+def password_reset_request():
+    # if the user is login, need not to reset password
+    if not current_user.is_anonymous:
+        return redirect('blog.home')
+
+    form = PasswordResetRequestForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user:
+            token = user.generate_reset_token()
+            send_email(user.email, 'Reset Your Password',
+                       'auth/email/reset_password', user=user, token=token)
+            flash('An email with instructions to reset your password has been '
+                  'sent to you.', category='success')
+        else:
+            flash('The email is not registered yet.', category='warning')
+        return redirect(url_for('blog.home'))
+
+    return render_template('password_reset_request.html', form=form)
+
+
+@auth_blueprint.route('/reset/<token>', methods=['GET', 'POST'])
+def password_reset(token):
+    # if the user is login, need not to reset password
+    if not current_user.is_anonymous:
+        return redirect('blog.home')
+
+    form = PasswordResetForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user.reset_password(token, form.new_password.data):
+            flash('Your password has been updated. Please Login',
+                  category='success')
+            return redirect(url_for('auth.login'))
+        else:
+            flash('Can not update your password', category='warning')
+            return redirect(url_for('blog.home'))
+
+    return render_template('password_reset.html', token=token, form=form)

@@ -36,7 +36,8 @@
             </div>
             <input class="btn btn-primary" type="submit" value="Login">
         </form>
-        <hr>
+        <br>
+        <p>Forgot your password? Click here to <a href="{{ url_for('.password_reset_request') }}">reset password</a>.</p>
         <p>New user? Click here to <a href="{{ url_for('.register') }}">register</a>.</p>
     </div>
     <div class="col-md-4"></div>
