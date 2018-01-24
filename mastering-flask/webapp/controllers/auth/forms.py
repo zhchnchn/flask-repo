@@ -97,8 +97,6 @@ class PasswordResetRequestForm(FlaskForm):
 
 
 class PasswordResetForm(FlaskForm):
-    email = StringField(
-        'Email', validators=[DataRequired(), Length(1, 64), Email()])
     new_password = PasswordField(
         'New password', validators=[DataRequired()])
     confirm_password = PasswordField(

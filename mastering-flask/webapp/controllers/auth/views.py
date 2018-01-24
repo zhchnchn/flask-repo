@@ -3,6 +3,7 @@ from flask import redirect, request, url_for, flash, \
     render_template, current_app
 from flask_login import login_user, logout_user, login_required, current_user
 from flask_principal import Identity, AnonymousIdentity, identity_changed
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from .forms import LoginForm, RegisterForm, ChangepasswordForm, \
     PasswordResetRequestForm, PasswordResetForm, ChangeEmailForm
 from ...models import db, User
@@ -147,7 +148,7 @@ def password_reset_request():
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user:
-            token = user.generate_reset_token()
+            token = user.generate_reset_token(form.email.data)
             send_email(user.email, 'Reset Your Password',
                        'auth/email/reset_password', user=user, token=token)
             flash('An email with instructions to reset your password has been '
@@ -167,7 +168,20 @@ def password_reset(token):
 
     form = PasswordResetForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
+        # 如果邮箱对应的用户不存在，则不能重置密码
+        s = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except:
+            return False
+        email = data.get('email')
+        if email is None:
+            return False
+        user = User.query.filter_by(email=email).first()
+        if user is None:
+            flash('Your email is invalid or the token expiration', category='warning')
+            return redirect(url_for('blog.home'))
+
         if user.reset_password(token, form.new_password.data):
             flash('Your password has been updated. Please Login',
                   category='success')
