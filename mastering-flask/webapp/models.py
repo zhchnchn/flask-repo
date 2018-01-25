@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import datetime
 from flask import current_app
 from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
@@ -34,10 +35,17 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(64), unique=True, index=True)
     username = db.Column(db.String(255))
     password_hash = db.Column(db.String(255))
+    confirmed = db.Column(db.Boolean, default=False)
+    # add User information column
+    name = db.Column(db.String(64))
+    location = db.Column(db.String(255))
+    about_me = db.Column(db.Text())
+    register_time = db.Column(db.DateTime(), default=datetime.datetime.utcnow)
+    last_seen = db.Column(db.DateTime(), default=datetime.datetime.utcnow)
+    # relations
     posts = db.relationship('Post', backref='user', lazy='dynamic')
     roles = db.relationship('Role', secondary=roles_users_table,
                             backref=db.backref('users', lazy='dynamic'))
-    confirmed = db.Column(db.Boolean, default=False)
 
     def __init__(self, username):
         self.username = username
@@ -134,6 +142,12 @@ class User(UserMixin, db.Model):
         db.session.commit()
 
         return True
+
+    # 用户每次访问网站后，last_seen这个值都会被刷新
+    def update_last_seen(self):
+        self.last_seen = datetime.datetime.utcnow()
+        db.session.add(self)
+        db.session.commit()
 
 
 class Role(db.Model):

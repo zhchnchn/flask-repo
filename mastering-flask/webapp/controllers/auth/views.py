@@ -18,12 +18,15 @@ from . import auth_blueprint
 # 则会被重定向到/auth/unconfirmed路由，要求用户先确认账户。
 @auth_blueprint.before_app_request
 def before_request():
-    if current_user.is_authenticated \
-            and not current_user.confirmed \
-            and request.endpoint \
-            and request.endpoint[:5] != 'auth.' \
-            and request.endpoint != 'static':
-        return redirect(url_for('auth.unconfirmed'))
+    if current_user.is_authenticated:
+        # before_app_request处理程序会在每次请求前运行，所以在这里实现刷新last_seen字段的需求
+        current_user.update_last_seen()
+
+        if not current_user.confirmed \
+                and request.endpoint \
+                and request.endpoint[:5] != 'auth.' \
+                and request.endpoint != 'static':
+            return redirect(url_for('auth.unconfirmed'))
 
 
 @auth_blueprint.route('/unconfirmed')
