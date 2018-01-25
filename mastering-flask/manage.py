@@ -85,7 +85,7 @@ def insert_data():
             new_post.user = user01
         else:
             new_post.user = user02
-        new_post.publish_date = datetime.datetime.now()
+        new_post.publish_date = datetime.datetime.utcnow()
         new_post.text = s
         new_post.tags = random.sample(tag_list, random.randint(1, 3))
         db.session.add(new_post)

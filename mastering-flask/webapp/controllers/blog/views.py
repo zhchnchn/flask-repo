@@ -52,7 +52,7 @@ def post(post_id):
         new_comment.name = form.name.data
         new_comment.text = form.text.data
         new_comment.post_id = post_id
-        new_comment.date = datetime.datetime.now()
+        new_comment.date = datetime.datetime.utcnow()
 
         db.session.add(new_comment)
         db.session.commit()
@@ -75,7 +75,7 @@ def new_post():
     if form.validate_on_submit():
         new_post = Post(form.title.data)
         new_post.text = form.text.data
-        new_post.publish_date = datetime.datetime.now()
+        new_post.publish_date = datetime.datetime.utcnow()
         new_post.user = User.query.filter_by(
             username=current_user.username).one()
 
@@ -100,7 +100,7 @@ def edit_post(post_id):
         if form.validate_on_submit():
             post.title = form.title.data
             post.text = form.text.data
-            post.publish_date = datetime.datetime.now()
+            post.publish_date = datetime.datetime.utcnow()
 
             db.session.add(post)
             db.session.commit()
@@ -141,7 +141,7 @@ def user(username):
 def digest_func():
     # 找出这周的起始和结束日
     # 取出当前时间的年，周
-    year, week = datetime.datetime.now().isocalendar()[0:2]
+    year, week = datetime.datetime.utcnow().isocalendar()[0:2]
     # date赋值为当年的1月1号
     date = datetime.date(year, 1, 1)
     # date.weekday()：判断当年的1月1号是周几，如果是周一，则为0，周二为1，以此类推

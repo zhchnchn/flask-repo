@@ -59,7 +59,7 @@ class PostApi(Resource):
 
             new_post = Post(title=args['title'])
             new_post.user = user
-            new_post.publish_date = datetime.datetime.now()
+            new_post.publish_date = datetime.datetime.utcnow()
             new_post.text = args['text']
 
             if args['tags']:
