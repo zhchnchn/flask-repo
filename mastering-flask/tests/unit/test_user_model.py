@@ -83,10 +83,11 @@ class UserModelTestCase(unittest.TestCase):
     def test_valid_reset_token(self):
         user = User('test')
         user.password = 'cat'
+        user.email = 'test@163.com'
         db.session.add(user)
         # 只有commit了才能拿到id，以便生成token
         db.session.commit()
-        token = user.generate_reset_token()
+        token = user.generate_reset_token(user.email)
         self.assertTrue(user.reset_password(token, 'dog'))
         self.assertTrue(user.check_password('dog'))
 
@@ -95,10 +96,12 @@ class UserModelTestCase(unittest.TestCase):
         user2 = User('test2')
         user1.password = 'cat'
         user2.password = 'dog'
+        user1.email = 'test1@163.com'
+        user2.email = 'test2@163.com'
         db.session.add(user1)
         db.session.add(user2)
         db.session.commit()
-        token = user1.generate_reset_token()
+        token = user1.generate_reset_token(user1.email)
         self.assertFalse(user2.reset_password(token, 'puppy'))
         self.assertTrue(user2.check_password('dog'))
 
