@@ -77,6 +77,7 @@ assets_env = Environment()
 
 main_css = Bundle(
     'css/bootstrap.min.css',
+    'css/styles.css',
     filters='cssmin',
     output='css/common.css'
 )
