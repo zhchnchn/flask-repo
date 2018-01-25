@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 import datetime
-from flask import render_template, redirect, url_for, abort
+from flask import render_template, redirect, url_for, abort, flash
 from flask_login import login_required, current_user
 from flask_principal import Permission, UserNeed
 from sqlalchemy import func, desc
 from ...models import db, Post, Tag, posts_tags_table, Comment, User
-from .forms import CommentForm, PostForm
+from .forms import CommentForm, PostForm, ProfileEditForm
 from ...extensions import admin_permission, poster_permission, cache
 from . import blog_blueprint
 
@@ -134,6 +134,24 @@ def user(username):
 
     return render_template('user.html', user=user, posts=posts, recent=recent,
                            top_tags=top_tags)
+
+@blog_blueprint.route('/edit-profile', methods=['GET', 'POST'])
+@login_required
+def edit_profile():
+    form = ProfileEditForm()
+    if form.validate_on_submit():
+        current_user.name = form.name.data
+        current_user.location = form.location.data
+        current_user.about_me = form.about_me.data
+        db.session.add(current_user)
+        db.session.commit()
+        flash('Your profile has been updated.', category='success')
+        return redirect(url_for('.user', username=current_user.username))
+
+    form.name.data = current_user.name
+    form.location.data = current_user.location
+    form.about_me.data = current_user.about_me
+    return render_template('edit_profile.html', form=form)
 
 
 @blog_blueprint.route('/digest')
