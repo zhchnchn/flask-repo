@@ -44,6 +44,8 @@ class User(UserMixin, db.Model):
     about_me = db.Column(db.Text())
     register_time = db.Column(db.DateTime(), default=datetime.datetime.utcnow)
     last_seen = db.Column(db.DateTime(), default=datetime.datetime.utcnow)
+    # 把email的MD5散列值保存在数据库
+    gravatar_hash = db.Column(db.String(32))
     # relations
     posts = db.relationship('Post', backref='user', lazy='dynamic')
     roles = db.relationship('Role', secondary=roles_users_table,
@@ -51,6 +53,10 @@ class User(UserMixin, db.Model):
 
     def __init__(self, username):
         self.username = username
+        # 由于email的MD5散列值是不变的，因此可以事前计算,将其缓存在User模型中
+        if self.email is not None and self.gravatar_hash is None:
+            self.gravatar_hash = hashlib.md5(
+                self.email.encode('utf-8')).hexdigest()
 
     def __repr__(self):
         return "<User, '{}'>".format(self.username)
@@ -140,6 +146,7 @@ class User(UserMixin, db.Model):
         if self.query.filter_by(email=new_email).first() is not None:
             return False
         self.email = new_email
+        self.gravatar_hash = hashlib.md5(self.email.encode('utf-8')).hexdigest()
         db.session.add(self)
         db.session.commit()
 
@@ -156,7 +163,8 @@ class User(UserMixin, db.Model):
             url = 'https://s.gravatar.com/avatar'
         else:
             url = 'http://www.gravatar.com/avatar'
-        hash_val = hashlib.md5(self.email.encode('utf-8')).hexdigest()
+        hash_val = self.gravatar_hash or \
+                   hashlib.md5(self.email.encode('utf-8')).hexdigest()
 
         return '{url}/{hash}?s={size}&d={default}&r={rating}'.format(
             url=url, hash=hash_val, size=size, default=default, rating=rating)
