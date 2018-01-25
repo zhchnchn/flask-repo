@@ -14,6 +14,7 @@ from flask_assets import Environment, Bundle
 from flask_admin import Admin
 from flask_bootstrap import Bootstrap
 from flask_mail import Mail
+from flask_moment import Moment
 
 
 # ******************* Flask-Bcrypt extension ********************************* #
@@ -101,3 +102,8 @@ bootstrap = Bootstrap()
 # ******************* Flask-Mail extension ********************************* #
 
 mail = Mail()
+
+
+# ******************* Flask-Moment extension ********************************* #
+
+moment = Moment()

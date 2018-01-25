@@ -8,7 +8,8 @@
             </div>
             <div class="row">
                 <div class="col-lg-6">
-                    <p>Written By <a href="{{ url_for('.user', username=post.user.username, _external=True) }}">{{ post.user.username }}</a> on {{ post.publish_date }}</p>
+                    <p>Written By <a href="{{ url_for('.user', username=post.user.username, _external=True) }}">{{ post.user.username }}</a></p>
+                    <p>{{ moment(post.publish_date).fromNow(refresh=True) }}</p>
                 </div>
                 <div class="col-lg-6">
                     <p class="text-right"> Tags:
@@ -62,8 +63,9 @@
                     {% else %}
                         {% for comment in comments %}
                             <div class="well">
-                                <p>By: {{ comment.name }} on {{ comment.date }}</p>
+                                <p>Comment Title: {{ comment.name }}</p>
                                 <p>{{ comment.text }}</p>
+                                <p>{{ moment(comment.date).fromNow(refresh=True) }}</p>
                             </div>
                         {% endfor %}
                     {% endif %}

@@ -107,12 +107,14 @@
         {% endblock %}
     </div>
 
+    {% block js %}
     <!--<script src="{{ url_for('static', filename='js/jquery.min.js', _external=True) }}"></script>-->
     <!--<script src="{{ url_for('static', filename='js/bootstrap.min.js', _external=True) }}"></script>-->
     {% assets "main_js" %}
     <script src="{{ ASSET_URL }}"></script>
     {% endassets %}
-    {% block js %}
+    {# import Flask-Moment object #}
+    {{ moment.include_moment() }}
     {% endblock %}
 </body>
 </html>
