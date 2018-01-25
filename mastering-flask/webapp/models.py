@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import datetime
-from flask import current_app
+import hashlib
+
+from flask import current_app, request
 from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
 from extensions import bcrypt, cache
@@ -148,6 +150,16 @@ class User(UserMixin, db.Model):
         self.last_seen = datetime.datetime.utcnow()
         db.session.add(self)
         db.session.commit()
+
+    def gravatar(self, size=100, default='identicon', rating='g'):
+        if request.is_secure:
+            url = 'https://s.gravatar.com/avatar'
+        else:
+            url = 'http://www.gravatar.com/avatar'
+        hash_val = hashlib.md5(self.email.encode('utf-8')).hexdigest()
+
+        return '{url}/{hash}?s={size}&d={default}&r={rating}'.format(
+            url=url, hash=hash_val, size=size, default=default, rating=rating)
 
 
 class Role(db.Model):
