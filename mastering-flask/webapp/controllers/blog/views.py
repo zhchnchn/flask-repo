@@ -76,8 +76,7 @@ def new_post():
         new_post = Post(form.title.data)
         new_post.text = form.text.data
         new_post.publish_date = datetime.datetime.utcnow()
-        new_post.user = User.query.filter_by(
-            username=current_user.username).one()
+        new_post.user = current_user._get_current_object()
 
         db.session.add(new_post)
         db.session.commit()

@@ -1,18 +1,27 @@
 {% extends "base.html" %}
 {% block title %}Home{% endblock %}
 {% block body %}
-<div class="row">
+<ul class="posts">
     <div class="col-lg-9">
         {% for post in posts.items %}
-            <div class="row">
-                <div class="col-lg-12"><h1>{{ post.title }}</h1></div>
+        <li class="post">
+            <a href="{{ url_for('.post', post_id=post.id, _external=True) }}">
+                {{ post.title }}
+            </a>
+            <div class="post-thumbnail">
+                <a href="{{ url_for('.user', username=post.user.username) }}">
+                    <img class="img-rounded profile-thumbnail" src="{{ post.user.gravatar(size=40) }}">
+                </a>
             </div>
-            <div class="row">
-                <div class="col-lg-12">
+            <div class="post-content">
+                <div class="post-date">{{ moment(post.publish_date).fromNow() }}</div>
+                <div class="post-author"><a href="{{ url_for('.user', username=post.user.username) }}">{{ post.user.username }}</a></div>
+                <div class="post-body">
                     {{ post.text | truncate(500) | safe }}
                     <a href="{{ url_for('.post', post_id=post.id, _external=True) }}">Read More</a>
                 </div>
             </div>
+        </li>
         {% endfor %}
     </div>
     <div class="col-lg-3">
@@ -33,7 +42,7 @@
             </ul>
         </div>
     </div>
-</div>
+</ul>
 
 {{ render_pagination(posts, '.home') }}
 {% endblock %}

@@ -190,7 +190,8 @@ class Post(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     title = db.Column(db.String(255))
     text = db.Column(db.Text())
-    publish_date = db.Column(db.DateTime())
+    publish_date = db.Column(
+        db.DateTime(), index=True, default=datetime.datetime.utcnow)
     user_id = db.Column(db.Integer(), db.ForeignKey('users.id'))
     comments = db.relationship('Comment', backref='post', lazy='dynamic')
     tags = db.relationship('Tag', secondary=posts_tags_table,
