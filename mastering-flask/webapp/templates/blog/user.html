@@ -1,38 +1,51 @@
 {% extends "base.html" %}
-{% block title %}{{ user.username }}'s Posts{% endblock %}
+{% block title %}{{ user.username }}{% endblock %}
 {% block body %}
-    <div class="row">
-        <h1 class="text-center">Posts By {{ user.username }}</h1>
-        <div class="col-lg-9">
-            {% for post in posts %}
-                <div class="row">
-                    <div class="col-lg-12"><h1>{{ post.title }}</h1></div>
+<div class="row">
+    <h1 class="text-left">{{ user.username }}</h1>
+    {% if user.name or user.location %}
+    <p>
+        {% if user.name %} {{ user.name }} {% endif %}
+        {% if user.location %} {{ user.location }} {% endif %}
+    </p>
+    {% endif %}
+    {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
+    <p>
+        Member since: {{ moment(user.register_time).format('L') }}. <br>
+        Last seen: {{ moment(user.last_seen).fromNow() }}.
+    </p>
+
+    <h2 class="text-left">{{ user.username | capitalize }}'s all posts:</h2>
+    <div class="col-lg-9">
+        {% for post in posts %}
+            <div class="row">
+                <div class="col-lg-12"><h3>{{ post.title }}</h3></div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    {{ post.text | truncate(500) | safe }}
+                    <a href="{{ url_for('.post', post_id=post.id, _external=True) }}">Read More</a>
                 </div>
-                <div class="row">
-                    <div class="col-lg-12">
-                        {{ post.text | truncate(500) | safe }} 
-                        <a href="{{ url_for('.post', post_id=post.id, _external=True) }}">Read More</a>
-                    </div>
-                </div>
-            {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
+    <div class="col-lg-3">
+        <div class="row">
+            <h5>Recent Posts</h5>
+            <ul>
+                {% for post in recent %}
+                    <li><a href="{{ url_for('.post', post_id=post.id, _external=True) }}">{{ post.title }}</a></li>
+                {% endfor %}
+            </ul>
         </div>
-        <div class="col-lg-3">
-            <div class="row">
-                <h5>Recent Posts</h5>
-                <ul>
-                    {% for post in recent %}
-                        <li><a href="{{ url_for('.post', post_id=post.id, _external=True) }}">{{ post.title }}</a></li>
-                    {% endfor %}
-                </ul>
-            </div>
-            <div class="row">
-                <h5>Popular Tags</h5>
-                <ul>
-                    {% for tag in top_tags %}
-                        <li><a href="{{ url_for('.tag', tag_name=tag[0].title, _external=True) }}">{{ tag[0].title }}</a></li>
-                    {% endfor %}
-                </ul>
-            </div>
+        <div class="row">
+            <h5>Popular Tags</h5>
+            <ul>
+                {% for tag in top_tags %}
+                    <li><a href="{{ url_for('.tag', tag_name=tag[0].title, _external=True) }}">{{ tag[0].title }}</a></li>
+                {% endfor %}
+            </ul>
         </div>
     </div>
+</div>
 {% endblock %}
