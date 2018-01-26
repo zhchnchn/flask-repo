@@ -8,7 +8,9 @@
         {% if user.name or user.location %}
         <p>
             {% if user.name %} {{ user.name }} {% endif %} <br>
-            Live in: {% if user.location %} {{ user.location }} {% endif %}
+            {% if user.location %}
+                From <a href="http://maps.google.com/?q={{ user.location }}">{{ user.location }}</a><br>
+            {% endif %}
         </p>
         {% endif %}
         {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
