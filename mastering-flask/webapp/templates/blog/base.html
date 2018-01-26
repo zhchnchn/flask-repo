@@ -1,5 +1,6 @@
 {# 这个宏函数接收一个SQLAlchemy的分页对象及一个视图函数名作为参数，然后生成Bootstrap风格的分页链接列表。#}
-{% macro render_pagination(pagination, endpoint) %}
+{#
+{% macro render_pagination(pagination, endpoint, args={}) %}
 <nav>
     <ul class="pagination">
         <li>
@@ -26,7 +27,9 @@
     </ul>
 </nav>
 {% endmacro %}
+#}
 
+{% from "bootstrap/pagination.html" import render_pagination %}
 <!DOCTYPE html>
 <html>
 <head>

@@ -79,6 +79,9 @@ class DevConfig(Config):
     MAIL_SUBJECT_PREFIX = '[Blog]'
     MAIL_SENDER = 'Blog Admin <xxx@163.com>'
 
+    # for pagination
+    PAGINATION_PER_PAGE = 10
+
 
 class TestConfig(Config):
     db_file = tempfile.NamedTemporaryFile()

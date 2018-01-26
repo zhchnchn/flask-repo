@@ -1,48 +1,13 @@
 {% extends "base.html" %}
 {% block title %}Home{% endblock %}
 {% block body %}
-<ul class="posts">
-    <div class="col-lg-9">
-        {% for post in posts.items %}
-        <li class="post">
-            <a href="{{ url_for('.post', post_id=post.id, _external=True) }}">
-                {{ post.title }}
-            </a>
-            <div class="post-thumbnail">
-                <a href="{{ url_for('.user', username=post.user.username) }}">
-                    <img class="img-rounded profile-thumbnail" src="{{ post.user.gravatar(size=40) }}">
-                </a>
-            </div>
-            <div class="post-content">
-                <div class="post-date">{{ moment(post.publish_date).fromNow() }}</div>
-                <div class="post-author"><a href="{{ url_for('.user', username=post.user.username) }}">{{ post.user.username }}</a></div>
-                <div class="post-body">
-                    {{ post.text | truncate(500) | safe }}
-                    <a href="{{ url_for('.post', post_id=post.id, _external=True) }}">Read More</a>
-                </div>
-            </div>
-        </li>
-        {% endfor %}
-    </div>
-    <div class="col-lg-3">
-        <div class="row">
-            <h5>Recent Posts</h5>
-            <ul>
-                {% for post in recent %}
-                    <li><a href="{{ url_for('.post', post_id=post.id, _external=True) }}">{{ post.title }}</a></li>
-                {% endfor %}
-            </ul>
-        </div>
-        <div class="row">
-            <h5>Popular Tags</h5>
-            <ul>
-                {% for tag in top_tags %}
-                    <li><a href="{{ url_for('.tag', tag_name=tag[0].title, _external=True) }}">{{ tag[0].title }}</a></li>
-                {% endfor %}
-            </ul>
-        </div>
-    </div>
-</ul>
-
-{{ render_pagination(posts, '.home') }}
+<div class="row">
+    {% include '_posts.html' %}
+    {% include '_sidebar.html' %}
+</div>
+{% if pagination %}
+<div class="pagination">
+    {{ render_pagination(pagination, endpoint='.home') }}
+</div>
+{% endif %}
 {% endblock %}

@@ -17,31 +17,31 @@
                 </td>
             </tr>
             {% for post in posts %}
-                <tr>
-                    <td style="font-size: 24px;
-                               font-family: Helvetica, sans-serif;
-                               color: #444;
-                               text-align: center;
-                               line-height: 1.65">
-                        {{ post.title }}
-                    </td>
-                </tr>
-                <tr>
-                    <td style="font-size: 14px;
-                               font-family: serif;
-                               color: #444;
-                               line-height:1.65">
-                        {{ post.text | truncate(500) | safe }}
-                    </td>
-                </tr>
-                <tr>
-                    <td style="font-size: 12px;
-                               font-family: serif;
-                               color: blue;
-                               margin-bottom: 20px">
-                        <a href="{{ url_for('.post', post_id=post.id, _external=True) }}">Read More</a>
-                    </td>
-                </tr>
+            <tr>
+                <td style="font-size: 24px;
+                           font-family: Helvetica, sans-serif;
+                           color: #444;
+                           text-align: center;
+                           line-height: 1.65">
+                    {{ post.title }}
+                </td>
+            </tr>
+            <tr>
+                <td style="font-size: 14px;
+                           font-family: serif;
+                           color: #444;
+                           line-height:1.65">
+                    {{ post.text | truncate(500) | safe }}
+                </td>
+            </tr>
+            <tr>
+                <td style="font-size: 12px;
+                           font-family: serif;
+                           color: blue;
+                           margin-bottom: 20px">
+                    <a href="{{ url_for('.post', post_id=post.id, _external=True) }}">Read More</a>
+                </td>
+            </tr>
             {% endfor %}
         </table>
     </body>

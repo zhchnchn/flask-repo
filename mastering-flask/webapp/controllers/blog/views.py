@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import datetime
-from flask import render_template, redirect, url_for, abort, flash
+from flask import render_template, redirect, url_for, abort, flash, current_app, \
+    request
 from flask_login import login_required, current_user
 from flask_principal import Permission, UserNeed
 from sqlalchemy import func, desc
@@ -33,14 +34,19 @@ def sidebar_data():
 
 
 @blog_blueprint.route('/')
-@blog_blueprint.route('/<int:page>')
 @cache.cached(timeout=60)
-def home(page=1):
-    posts = Post.query.order_by(Post.publish_date.desc()).paginate(page, 10)
+def home():
+    page = request.args.get('page', 1, type=int)
+    pagination = Post.query.order_by(Post.publish_date.desc()).paginate(
+        page,
+        per_page=current_app.config['PAGINATION_PER_PAGE'],
+        error_out=False
+    )
+    posts = pagination.items
     recent, top_tags = sidebar_data()
 
     return render_template('home.html', posts=posts, recent=recent,
-                           top_tags=top_tags)
+                           top_tags=top_tags, pagination=pagination)
 
 
 @blog_blueprint.route('/post/<int:post_id>', methods=['GET', 'POST'])
@@ -116,23 +122,36 @@ def edit_post(post_id):
 @blog_blueprint.route('/tag/<string:tag_name>')
 @cache.cached(timeout=60)
 def tag(tag_name):
+    page = request.args.get('page', 1, type=int)
     tag = Tag.query.filter_by(title=tag_name).first_or_404()
-    posts = tag.posts.order_by(Post.publish_date.desc()).all()
+    pagination = tag.posts.order_by(Post.publish_date.desc()).paginate(
+        page,
+        per_page=current_app.config['PAGINATION_PER_PAGE'],
+        error_out = False
+    )
+    posts = pagination.items
     recent, top_tags = sidebar_data()
 
     return render_template('tag.html', tag=tag, posts=posts, recent=recent,
-                           top_tags=top_tags)
+                           top_tags=top_tags, pagination=pagination)
 
 
 @blog_blueprint.route('/user/<string:username>')
 @cache.cached(timeout=60)
 def user(username):
+    page = request.args.get('page', 1, type=int)
     user = User.query.filter_by(username=username).first_or_404()
-    posts = user.posts.order_by(Post.publish_date.desc()).all()
+    pagination = user.posts.order_by(Post.publish_date.desc()).paginate(
+        page,
+        per_page=current_app.config['PAGINATION_PER_PAGE'],
+        error_out=False
+    )
+    posts = pagination.items
     recent, top_tags = sidebar_data()
 
     return render_template('user.html', user=user, posts=posts, recent=recent,
-                           top_tags=top_tags)
+                           top_tags=top_tags, pagination=pagination)
+
 
 @blog_blueprint.route('/edit-profile', methods=['GET', 'POST'])
 @login_required

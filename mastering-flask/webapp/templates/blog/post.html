@@ -72,23 +72,6 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-3">
-        <div class="row">
-            <h5>Recent Posts</h5>
-            <ul>
-                {% for post in recent %}
-                    <li><a href="{{ url_for('.post', post_id=post.id, _external=True) }}">{{ post.title }}</a></li>
-                {% endfor %}
-            </ul>
-        </div>
-        <div class="row">
-            <h5>Popular Tags</h5>
-            <ul>
-                {% for tag in top_tags %}
-                    <li><a href="{{ url_for('.tag', tag_name=tag[0].title, _external=True) }}">{{ tag[0].title }}</a></li>
-                {% endfor %}
-            </ul>
-        </div>
-    </div>
+    {% include '_sidebar.html' %}
 </div>
 {% endblock %}

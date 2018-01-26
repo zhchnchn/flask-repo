@@ -1,0 +1,24 @@
+<ul class="posts">
+    <div class="col-lg-9">
+        {% for post in posts %}
+        <li class="post">
+            <a href="{{ url_for('.post', post_id=post.id, _external=True) }}">
+                {{ post.title }}
+            </a>
+            <div class="post-thumbnail">
+                <a href="{{ url_for('.user', username=post.user.username) }}">
+                    <img class="img-rounded profile-thumbnail" src="{{ post.user.gravatar(size=40) }}">
+                </a>
+            </div>
+            <div class="post-content">
+                <div class="post-date">{{ moment(post.publish_date).fromNow() }}</div>
+                <div class="post-author"><a href="{{ url_for('.user', username=post.user.username) }}">{{ post.user.username }}</a></div>
+                <div class="post-body">
+                    {{ post.text | truncate(500) | safe }}
+                    <a href="{{ url_for('.post', post_id=post.id, _external=True) }}">Read More</a>
+                </div>
+            </div>
+        </li>
+        {% endfor %}
+    </div>
+</ul>
