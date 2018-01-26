@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import datetime
 import hashlib
-
+import random
 from flask import current_app, request
 from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
@@ -169,6 +169,45 @@ class User(UserMixin, db.Model):
         return '{url}/{hash}?s={size}&d={default}&r={rating}'.format(
             url=url, hash=hash_val, size=size, default=default, rating=rating)
 
+    # 生成模拟数据
+    @staticmethod
+    def generate_fake(count=100):
+        from sqlalchemy.exc import IntegrityError
+        import forgery_py
+
+        # 设定一个admin用户
+        admin = User(username='admin')
+        admin.email = 'admin@163.com'
+        admin.password = 'admin'
+        admin.confirmed = True
+        admin.name = forgery_py.name.full_name()
+        admin.location = forgery_py.address.city()
+        admin.about_me = forgery_py.lorem_ipsum.sentence()
+        admin.register_time = forgery_py.date.date(True)
+        admin.roles.append(Role.query.filter_by(name='admin').first())
+        admin.roles.append(Role.query.filter_by(name='poster').first())
+        admin.roles.append(Role.query.filter_by(name='default').first())
+        db.session.add(admin)
+        db.session.commit()
+
+        random.seed()
+        for i in xrange(count-1):
+            u = User(username=forgery_py.internet.user_name(True))
+            u.email = forgery_py.internet.email_address()
+            u.password = forgery_py.lorem_ipsum.word()
+            u.confirmed = True
+            u.name = forgery_py.name.full_name()
+            u.location = forgery_py.address.city()
+            u.about_me = forgery_py.lorem_ipsum.sentence()
+            u.register_time = forgery_py.date.date(True)
+            u.roles.append(Role.query.filter_by(name='poster').first())
+            u.roles.append(Role.query.filter_by(name='default').first())
+            db.session.add(u)
+            try:
+                db.session.commit()
+            except IntegrityError:
+                db.session.rollback()
+
 
 class Role(db.Model):
     __tablename__ = 'roles'
@@ -182,6 +221,20 @@ class Role(db.Model):
 
     def __repr__(self):
         return '<Role {}>'.format(self.name)
+
+    @staticmethod
+    def generate_fake():
+        # 这里设定了3种角色
+        role_admin = Role(name='admin')
+        role_admin.description = "administrator role"
+        role_poster = Role(name='poster')
+        role_poster.description = "the registered user role"
+        role_default = Role(name='default')
+        role_default.description = 'the unregistered user role'
+        db.session.add(role_admin)
+        db.session.add(role_poster)
+        db.session.add(role_default)
+        db.session.commit()
 
 
 class Post(db.Model):
@@ -203,6 +256,25 @@ class Post(db.Model):
     def __repr__(self):
         return "<Post '{}'>".format(self.title)
 
+    @staticmethod
+    def generate_fake(count=100):
+        import forgery_py
+
+        random.seed()
+        user_count = User.query.count()
+        tag_list = Tag.query.all()
+        for i in xrange(count):
+            u = User.query.offset(random.randint(0, user_count-1)).first()
+            tags = random.sample(tag_list, random.randint(1, 3))
+            p = Post(title=forgery_py.lorem_ipsum.title())
+            p.text = forgery_py.lorem_ipsum.sentences(random.randint(1, 5))
+            p.publish_date = forgery_py.date.date(True)
+            p.user = u
+            p.tags = tags
+            db.session.add(p)
+
+        db.session.commit()
+
 
 class Comment(db.Model):
     __tablename__ = 'comments'
@@ -213,8 +285,27 @@ class Comment(db.Model):
     date = db.Column(db.DateTime())
     post_id = db.Column(db.Integer(), db.ForeignKey('posts.id'))
 
+    def __init__(self, name):
+        self.name = name
+
     def __repr__(self):
         return "<Comment '{}'>".format(self.text[:15])
+
+    @staticmethod
+    def generate_fake(count=100):
+        import forgery_py
+
+        random.seed()
+        post_count = Post.query.count()
+        for i in xrange(count):
+            post = Post.query.offset(random.randint(0, post_count - 1)).first()
+            c = Comment(name=forgery_py.lorem_ipsum.title())
+            c.text = forgery_py.lorem_ipsum.sentences(random.randint(1, 5))
+            c.date = forgery_py.date.date(True)
+            c.post = post
+            db.session.add(c)
+
+        db.session.commit()
 
 
 class Tag(db.Model):
@@ -228,3 +319,15 @@ class Tag(db.Model):
 
     def __repr__(self):
         return "<Tag '{}'>".format(self.title)
+
+    @staticmethod
+    def generate_fake(count=10):
+        from random import seed
+        import forgery_py
+
+        seed()
+        for i in xrange(count):
+            t = Tag(title=forgery_py.lorem_ipsum.word())
+            db.session.add(t)
+
+        db.session.commit()

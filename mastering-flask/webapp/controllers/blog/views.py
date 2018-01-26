@@ -17,7 +17,11 @@ def sidebar_data():
     每个页面都有一个侧边栏，显示5篇最新的文章，以及5个最常用的标签
     """
 
-    recent = Post.query.order_by(Post.publish_date.desc()).limit(5).all()
+    recent = Post.query.order_by(
+        Post.publish_date.desc()
+    ).limit(
+        current_app.config['TOP_POSTS_NUM']
+    ).all()
     # 下面的查询对应的SQL语句为
     # SELECT tags.id AS tags_id, tags.title AS tags_title,
     #        count(posts_tags.post_id) AS total
@@ -28,7 +32,9 @@ def sidebar_data():
     # LIMIT ? OFFSET ?
     top_tags = db.session.query(
         Tag, func.count(posts_tags_table.c.post_id).label('total')
-    ).join(posts_tags_table).group_by(Tag).order_by(desc('total')).limit(5).all()
+    ).join(posts_tags_table).group_by(Tag).order_by(desc('total')).limit(
+        current_app.config['TOP_TAGS_NUM']
+    ).all()
 
     return recent, top_tags
 

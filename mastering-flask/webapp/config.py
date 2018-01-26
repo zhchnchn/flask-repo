@@ -79,7 +79,10 @@ class DevConfig(Config):
     MAIL_SUBJECT_PREFIX = '[Blog]'
     MAIL_SENDER = 'Blog Admin <xxx@163.com>'
 
-    # for pagination
+    # 配置侧边栏显示最新发布的文章，以及最常用的标签的个数
+    TOP_POSTS_NUM = 10
+    TOP_TAGS_NUM = 10
+    # 分页，每页显示的文章数
     PAGINATION_PER_PAGE = 10
 
 
