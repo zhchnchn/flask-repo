@@ -8,7 +8,8 @@
 </div>
 {% if pagination %}
 <div class="pagination">
-    {{ render_pagination(pagination, endpoint='.tag', args={'tag_name': tag.title}) }}
+    {# {{ render_pagination(pagination, endpoint='.tag', args={'tag_name': tag.title}) }} #}
+    {{ pagination_widget(pagination, endpoint='.tag', tag_name=tag.title) }}
 </div>
 {% endif %}
 {% endblock %}

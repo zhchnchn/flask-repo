@@ -30,7 +30,8 @@
 </div>
 {% if pagination %}
 <div class="pagination">
-    {{ render_pagination(pagination, endpoint='.user', args={'username': user.username}) }}
+    {# {{ render_pagination(pagination, endpoint='.user', args={'username': user.username}) }} #}
+    {{ pagination_widget(pagination, endpoint='.user', username=user.username) }}
 </div>
 {% endif %}
 {% endblock %}

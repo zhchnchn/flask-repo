@@ -1,35 +1,5 @@
-{# 这个宏函数接收一个SQLAlchemy的分页对象及一个视图函数名作为参数，然后生成Bootstrap风格的分页链接列表。#}
-{#
-{% macro render_pagination(pagination, endpoint, args={}) %}
-<nav>
-    <ul class="pagination">
-        <li>
-            <a href="{{ url_for('.home', page=pagination.prev().page, _external=True) }}" aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
-            </a>
-        </li>
-        {% for page in pagination.iter_pages() %}
-            {% if page %}
-                {% if page != pagination.page %}
-                    <li><a href="{{ url_for(endpoint, page=page, _external=True) }}">{{ page }}</a></li>
-                {% else %}
-                    <li><a href="">{{ page }}</a></li>
-                {% endif %}
-            {% else %}
-                <li><a>…</a><li>
-            {% endif %}
-        {% endfor %}
-        <li>
-            <a href="{{ url_for('.home', page=pagination.next().page,  _external=True) }}" aria-label="Next">
-                <span aria-hidden="true">&raquo;</span>
-            </a>
-        </li>
-    </ul>
-</nav>
-{% endmacro %}
-#}
-
-{% from "bootstrap/pagination.html" import render_pagination %}
+{# {% from "bootstrap/pagination.html" import render_pagination %} #}
+{% from "blog/macros/_pagination.html" import pagination_widget %}
 <!DOCTYPE html>
 <html>
 <head>
