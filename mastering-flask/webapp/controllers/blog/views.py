@@ -34,7 +34,7 @@ def sidebar_data():
 
 
 @blog_blueprint.route('/')
-@cache.cached(timeout=60)
+# @cache.cached(timeout=60)
 def home():
     page = request.args.get('page', 1, type=int)
     pagination = Post.query.order_by(Post.publish_date.desc()).paginate(
@@ -120,7 +120,7 @@ def edit_post(post_id):
 
 
 @blog_blueprint.route('/tag/<string:tag_name>')
-@cache.cached(timeout=60)
+# @cache.cached(timeout=60)
 def tag(tag_name):
     page = request.args.get('page', 1, type=int)
     tag = Tag.query.filter_by(title=tag_name).first_or_404()
@@ -137,7 +137,7 @@ def tag(tag_name):
 
 
 @blog_blueprint.route('/user/<string:username>')
-@cache.cached(timeout=60)
+# @cache.cached(timeout=60)
 def user(username):
     page = request.args.get('page', 1, type=int)
     user = User.query.filter_by(username=username).first_or_404()
