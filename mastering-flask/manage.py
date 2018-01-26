@@ -44,7 +44,6 @@ def insert_data():
     db.session.add(role_default)
 
     # add User
-    # add User
     admin = User(username='admin')
     admin.email = 'admin@163.com'
     admin.password = 'admin'

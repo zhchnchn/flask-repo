@@ -2,7 +2,7 @@
 import random
 import datetime
 from flask import Flask
-from webapp.models import User, Tag, Post, db, Role
+from webapp.models import User, Tag, Post, db, Role, Comment
 from webapp.config import config
 
 
@@ -77,6 +77,21 @@ def insert_data():
             new_post.text = s
             new_post.tags = random.sample(tag_list, random.randint(1, 3))
             db.session.add(new_post)
+
+        # add comment
+        comment01 = Comment()
+        comment01.name = 'comment01'
+        comment01.text = 'comment text'
+        comment01.post_id = 99
+        comment01.date = datetime.datetime.utcnow()
+        db.session.add(comment01)
+
+        comment02 = Comment()
+        comment02.name = 'comment02'
+        comment02.text = 'comment text'
+        comment02.post_id = 100
+        comment02.date = datetime.datetime.utcnow()
+        db.session.add(comment02)
 
         db.session.commit()
 
