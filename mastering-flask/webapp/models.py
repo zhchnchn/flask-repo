@@ -29,6 +29,16 @@ roles_users_table = db.Table(
 )
 
 
+# follows table
+class Follow(db.Model):
+    __tablename__ = 'follows'
+    following_id = db.Column(db.Integer(), db.ForeignKey('users.id'),
+                            primary_key=True)
+    follower_id = db.Column(db.Integer(), db.ForeignKey('users.id'),
+                            primary_key=True)
+    timestamp = db.Column(db.DateTime(), default=datetime.datetime.utcnow)
+
+
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
 
@@ -50,6 +60,22 @@ class User(UserMixin, db.Model):
     posts = db.relationship('Post', backref='user', lazy='dynamic')
     roles = db.relationship('Role', secondary=roles_users_table,
                             backref=db.backref('users', lazy='dynamic'))
+    # 关注别人的一对多关系，多的一方为Follow模型
+    following = db.relationship(
+        'Follow',
+        foreign_keys=[Follow.follower_id],
+        backref=db.backref('follower', lazy='joined'),
+        lazy='dynamic',
+        cascade='all, delete-orphan'
+    )
+    # 被别人关注的一对多关系，，多的一方为Follow模型
+    followers = db.relationship(
+        'Follow',
+        foreign_keys=[Follow.following_id],
+        backref=db.backref('following', lazy='joined'),
+        lazy='dynamic',
+        cascade='all, delete-orphan'
+    )
 
     def __init__(self, username):
         self.username = username
@@ -207,6 +233,24 @@ class User(UserMixin, db.Model):
                 db.session.commit()
             except IntegrityError:
                 db.session.rollback()
+
+    def is_following(self, user):
+        return self.following.filter_by(
+            following_id=user.id).first() is not None
+
+    def is_followed_by(self, user):
+        return self.followers.filter_by(
+            follower_id=user.id).first() is not None
+
+    def follow(self, user):
+        if not self.is_following(user):
+            f = Follow(following=user)
+            self.following.append(f)
+
+    def unfollow(self, user):
+        f = self.following.filter_by(following_id=user.id).first()
+        if f:
+            self.following.remove(f)
 
 
 class Role(db.Model):

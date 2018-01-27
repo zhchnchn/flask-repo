@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 import unittest
 import time
+import datetime
 from webapp import create_app
-from webapp.models import db, User
+from webapp.models import db, User, Follow
 from webapp.extensions import admin, rest_api
 
 
@@ -142,6 +143,50 @@ class UserModelTestCase(unittest.TestCase):
         token = user2.generate_email_change_token('test1@163.com')
         self.assertFalse(user2.change_email(token))
         self.assertTrue(user2.email == 'test2@163.com')
+
+    def test_follows(self):
+        u1 = User('test1')
+        u1.email = 'test1@163.com'
+        u1.password = 'cat'
+        u2 = User('test2')
+        u2.email = 'test2@163.com'
+        u2.password = 'dog'
+        db.session.add(u1)
+        db.session.add(u2)
+        db.session.commit()
+        self.assertFalse(u1.is_following(u2))
+        self.assertFalse(u1.is_followed_by(u2))
+
+        timestamp_before = datetime.datetime.utcnow()
+        u1.follow(u2)
+        db.session.add(u1)
+        db.session.commit()
+        timestamp_after = datetime.datetime.utcnow()
+        self.assertTrue(u1.is_following(u2))
+        self.assertFalse(u1.is_followed_by(u2))
+        self.assertTrue(u2.is_followed_by(u1))
+        self.assertTrue(u1.following.count() == 1)
+        self.assertTrue(u2.followers.count() == 1)
+        f = u1.following.all()[-1]
+        self.assertTrue(f.following == u2)
+        self.assertTrue(timestamp_before <= f.timestamp <= timestamp_after)
+        f = u2.followers.all()[-1]
+        self.assertTrue(f.follower == u1)
+
+        u1.unfollow(u2)
+        db.session.add(u1)
+        db.session.commit()
+        self.assertTrue(u1.following.count() == 0)
+        self.assertTrue(u2.followers.count() == 0)
+        self.assertTrue(Follow.query.count() == 0)
+
+        u2.follow(u1)
+        db.session.add(u1)
+        db.session.add(u2)
+        db.session.commit()
+        db.session.delete(u2)
+        db.session.commit()
+        self.assertTrue(Follow.query.count() == 0)
 
 
 if __name__ == '__main__':

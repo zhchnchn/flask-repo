@@ -6,7 +6,7 @@ from flask_script import Manager, Server
 from flask_script.commands import ShowUrls, Clean
 from flask_migrate import Migrate, MigrateCommand
 from webapp import create_app
-from webapp.models import db, User, Post, Tag, Comment, Role
+from webapp.models import db, User, Post, Tag, Comment, Role, Follow
 
 
 # 默认使用 default 配置
@@ -24,7 +24,7 @@ manager.add_command('db', MigrateCommand)
 @manager.shell
 def make_shell_context():
     return dict(app=app, db=db, User=User, Post=Post, Tag=Tag, Comment=Comment,
-                Role=Role)
+                Role=Role, Follow=Follow)
 
 
 @manager.command

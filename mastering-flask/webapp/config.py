@@ -15,6 +15,12 @@ class Config(object):
     # RECAPTCHA_PUBLIC_KEY = "6LfxDkAUAAAAALj-PpjdEd-zb1MKakbxD776zaAK"
     # RECAPTCHA_PRIVATE_KEY = '6LfxDkAUAAAAAPtAOUGy278uYYwEYp31cmE4QbVg'
 
+    # 配置侧边栏显示最新发布的文章，以及最常用的标签的个数
+    TOP_POSTS_NUM = 10
+    TOP_TAGS_NUM = 10
+    # 分页，每页显示的文章数
+    PAGINATION_PER_PAGE = 10
+
 
 class ProductConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir,
@@ -78,12 +84,6 @@ class DevConfig(Config):
     MAIL_PASSWORD = 'xxx'
     MAIL_SUBJECT_PREFIX = '[Blog]'
     MAIL_SENDER = 'Blog Admin <xxx@163.com>'
-
-    # 配置侧边栏显示最新发布的文章，以及最常用的标签的个数
-    TOP_POSTS_NUM = 10
-    TOP_TAGS_NUM = 10
-    # 分页，每页显示的文章数
-    PAGINATION_PER_PAGE = 10
 
 
 class TestConfig(Config):
