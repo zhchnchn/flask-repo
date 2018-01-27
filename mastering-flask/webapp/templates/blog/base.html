@@ -27,7 +27,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="{{ url_for('main.index') }}">Flasky</a>
+                    <a class="navbar-brand" href="{{ url_for('main.index') }}">Blog</a>
                 </div>
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
@@ -90,7 +90,7 @@
     {% assets "main_js" %}
     <script src="{{ ASSET_URL }}"></script>
     {% endassets %}
-    {# import Flask-Moment object #}
+    {# 导入Flask-Moment对象 #}
     {{ moment.include_moment() }}
     {% endblock %}
 </body>

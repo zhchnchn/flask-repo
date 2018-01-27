@@ -2,13 +2,23 @@
 from flask import redirect, request, url_for, flash, \
     render_template, current_app
 from flask_login import login_user, logout_user, login_required, current_user
-from flask_principal import Identity, AnonymousIdentity, identity_changed
+from flask_principal import Identity, AnonymousIdentity, identity_changed, \
+    IdentityContext
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from .forms import LoginForm, RegisterForm, ChangepasswordForm, \
     PasswordResetRequestForm, PasswordResetForm, ChangeEmailForm
 from ...models import db, User
 from ...email import send_email
+from ...extensions import admin_permission
 from . import auth_blueprint
+
+
+# 上下文处理, 可以在Jinja2模板中判断是否有admin执行权限
+# 参考：http://blog.csdn.net/qq850482461/article/details/76111609
+@auth_blueprint.app_context_processor
+def context():
+    admin_context = IdentityContext(admin_permission)
+    return dict(admin=admin_context)
 
 
 # 如果：

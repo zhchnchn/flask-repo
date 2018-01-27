@@ -115,7 +115,7 @@ def edit_post(post_id):
 
             db.session.add(post)
             db.session.commit()
-
+            flash('The post has been updated.', category='success')
             return redirect(url_for('.post', post_id=post.id))
 
         form.text.data = post.text
