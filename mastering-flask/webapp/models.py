@@ -201,7 +201,7 @@ class User(UserMixin, db.Model):
         from sqlalchemy.exc import IntegrityError
         import forgery_py
 
-        # 设定一个admin用户
+        # 设定一个admin用户和2个普通账户，以方便使用密码登录
         admin = User(username='admin')
         admin.email = 'admin@163.com'
         admin.password = 'admin'
@@ -214,10 +214,32 @@ class User(UserMixin, db.Model):
         admin.roles.append(Role.query.filter_by(name='poster').first())
         admin.roles.append(Role.query.filter_by(name='default').first())
         db.session.add(admin)
+        user01 = User(username='user01')
+        user01.email = 'user01@163.com'
+        user01.password = 'user01'
+        user01.confirmed = True
+        user01.name = forgery_py.name.full_name()
+        user01.location = forgery_py.address.city()
+        user01.about_me = forgery_py.lorem_ipsum.sentence()
+        user01.register_time = forgery_py.date.date(True)
+        user01.roles.append(Role.query.filter_by(name='poster').first())
+        user01.roles.append(Role.query.filter_by(name='default').first())
+        db.session.add(user01)
+        user02 = User(username='user02')
+        user02.email = 'user02@163.com'
+        user02.password = 'user02'
+        user02.confirmed = True
+        user02.name = forgery_py.name.full_name()
+        user02.location = forgery_py.address.city()
+        user02.about_me = forgery_py.lorem_ipsum.sentence()
+        user02.register_time = forgery_py.date.date(True)
+        user02.roles.append(Role.query.filter_by(name='poster').first())
+        user02.roles.append(Role.query.filter_by(name='default').first())
+        db.session.add(user02)
         db.session.commit()
 
         random.seed()
-        for i in xrange(count-1):
+        for i in xrange(count-3):
             u = User(username=forgery_py.internet.user_name(True))
             u.email = forgery_py.internet.email_address()
             u.password = forgery_py.lorem_ipsum.word()

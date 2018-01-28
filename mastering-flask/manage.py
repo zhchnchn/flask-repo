@@ -49,6 +49,7 @@ def clear_data():
     db.engine.execute("delete from comments;")
     db.engine.execute("delete from posts_tags;")
     db.engine.execute("delete from roles_users;")
+    db.engine.execute("delete from follows;")
     db.session.commit()
 
 
