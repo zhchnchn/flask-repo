@@ -19,7 +19,9 @@ class Config(object):
     TOP_POSTS_NUM = 10
     TOP_TAGS_NUM = 10
     # 分页，每页显示的文章数
-    PAGINATION_PER_PAGE = 10
+    PAGINATION_POST_PER_PAGE = 10
+    # 分页，每页显示的关注者数目
+    PAGINATION_FOLLOWERS_PER_PAGE = 50
 
 
 class ProductConfig(Config):

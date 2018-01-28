@@ -33,7 +33,7 @@ roles_users_table = db.Table(
 class Follow(db.Model):
     __tablename__ = 'follows'
     following_id = db.Column(db.Integer(), db.ForeignKey('users.id'),
-                            primary_key=True)
+                             primary_key=True)
     follower_id = db.Column(db.Integer(), db.ForeignKey('users.id'),
                             primary_key=True)
     timestamp = db.Column(db.DateTime(), default=datetime.datetime.utcnow)
@@ -61,7 +61,7 @@ class User(UserMixin, db.Model):
     roles = db.relationship('Role', secondary=roles_users_table,
                             backref=db.backref('users', lazy='dynamic'))
     # 关注别人的一对多关系，多的一方为Follow模型
-    following = db.relationship(
+    followings = db.relationship(
         'Follow',
         foreign_keys=[Follow.follower_id],
         backref=db.backref('follower', lazy='joined'),
@@ -235,7 +235,7 @@ class User(UserMixin, db.Model):
                 db.session.rollback()
 
     def is_following(self, user):
-        return self.following.filter_by(
+        return self.followings.filter_by(
             following_id=user.id).first() is not None
 
     def is_followed_by(self, user):
@@ -244,13 +244,15 @@ class User(UserMixin, db.Model):
 
     def follow(self, user):
         if not self.is_following(user):
-            f = Follow(following=user)
-            self.following.append(f)
+            f = Follow(following=user, follower=self)
+            db.session.add(f)
+            db.session.commit()
 
     def unfollow(self, user):
-        f = self.following.filter_by(following_id=user.id).first()
+        f = self.followings.filter_by(following_id=user.id).first()
         if f:
-            self.following.remove(f)
+            db.session.delete(f)
+            db.session.commit()
 
 
 class Role(db.Model):

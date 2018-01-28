@@ -45,7 +45,7 @@ def home():
     page = request.args.get('page', 1, type=int)
     pagination = Post.query.order_by(Post.publish_date.desc()).paginate(
         page,
-        per_page=current_app.config['PAGINATION_PER_PAGE'],
+        per_page=current_app.config['PAGINATION_POST_PER_PAGE'],
         error_out=False
     )
     posts = pagination.items
@@ -56,7 +56,7 @@ def home():
 
 
 @blog_blueprint.route('/post/<int:post_id>', methods=['GET', 'POST'])
-@cache.cached(timeout=60)
+#@cache.cached(timeout=60)
 def post(post_id):
     form = CommentForm()
     if form.validate_on_submit():
@@ -132,7 +132,7 @@ def tag(tag_name):
     tag = Tag.query.filter_by(title=tag_name).first_or_404()
     pagination = tag.posts.order_by(Post.publish_date.desc()).paginate(
         page,
-        per_page=current_app.config['PAGINATION_PER_PAGE'],
+        per_page=current_app.config['PAGINATION_POST_PER_PAGE'],
         error_out = False
     )
     posts = pagination.items
@@ -149,7 +149,7 @@ def user(username):
     user = User.query.filter_by(username=username).first_or_404()
     pagination = user.posts.order_by(Post.publish_date.desc()).paginate(
         page,
-        per_page=current_app.config['PAGINATION_PER_PAGE'],
+        per_page=current_app.config['PAGINATION_POST_PER_PAGE'],
         error_out=False
     )
     posts = pagination.items
@@ -209,3 +209,70 @@ def digest_func():
         return None
 
     return render_template("digest.html", posts=posts)
+
+
+@blog_blueprint.route('/follow/<username>')
+@login_required
+def follow(username):
+    user = User.query.filter_by(username=username).first()
+    if user is None:
+        flash('Invalid User.', category='error')
+        return redirect(url_for('.home'))
+    if current_user.is_following(user):
+        flash('You are already following this user.', category='success')
+        return redirect(url_for('.user', username=username))
+    current_user.follow(user)
+    flash('You are now following %s.' % username, category='success')
+    return redirect(url_for('.user', username=username))
+
+
+@blog_blueprint.route('/unfollow/<username>')
+@login_required
+def unfollow(username):
+    user = User.query.filter_by(username=username).first()
+    if user is None:
+        flash('Invalid User.', category='error')
+        return redirect(url_for('.home'))
+    if not current_user.is_following(user):
+        flash('You are not following this user.', category='success')
+        return redirect(url_for('.user', username=username))
+    current_user.unfollow(user)
+    flash('You are not following %s anymore.' % username, category='success')
+    return redirect(url_for('.user', username=username))
+
+
+@blog_blueprint.route('/followers/<username>')
+def followers(username):
+    user = User.query.filter_by(username=username).first()
+    if user is None:
+        flash('Invalid User.', category='error')
+        return redirect(url_for('.home'))
+    page = request.args.get('page', 1, type=int)
+    pagination = user.followers.paginate(
+        page=page,
+        per_page=current_app.config['PAGINATION_FOLLOWERS_PER_PAGE'],
+        error_out=False
+    )
+    follows = [{'user': item.follower, 'timestamp': item.timestamp}
+               for item in pagination.items]
+    return render_template('followers.html', user=user, title='Followers of',
+                           endpoint='.followers', pagination=pagination,
+                           follows=follows)
+
+@blog_blueprint.route('/followed-by/<username>')
+def followed_by(username):
+    user = User.query.filter_by(username=username).first()
+    if user is None:
+        flash('Invalid User.', category='error')
+        return redirect(url_for('.home'))
+    page = request.args.get('page', 1, type=int)
+    pagination = user.followings.paginate(
+        page=page,
+        per_page=current_app.config['PAGINATION_FOLLOWERS_PER_PAGE'],
+        error_out=False
+    )
+    follows = [{'user': item.following, 'timestamp': item.timestamp}
+               for item in pagination.items]
+    return render_template('followers.html', user=user, title='Followed by',
+                           endpoint='.followed_by', pagination=pagination,
+                           follows=follows)
