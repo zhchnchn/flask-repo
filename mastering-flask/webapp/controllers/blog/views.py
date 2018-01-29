@@ -322,3 +322,33 @@ def show_following():
     resp = make_response(redirect(url_for('.home')))
     resp.set_cookie('show_following', '1', max_age=30*24*60*60)
     return resp
+
+
+@blog_blueprint.route('/moderate/enable/<int:comment_id>')
+@login_required
+@admin_permission.require(http_exception=403)
+def moderate_enable(comment_id):
+    comment = Comment.query.get_or_404(comment_id)
+    comment.disabled = False
+    db.session.add(comment)
+    db.session.commit()
+    return redirect(url_for(
+        '.post',
+        post_id=comment.post.id,
+        page=request.args.get('page', -1, type=int))
+    )
+
+
+@blog_blueprint.route('/moderate/disable/<int:comment_id>')
+@login_required
+@admin_permission.require(http_exception=403)
+def moderate_disable(comment_id):
+    comment = Comment.query.get_or_404(comment_id)
+    comment.disabled = True
+    db.session.add(comment)
+    db.session.commit()
+    return redirect(url_for(
+        '.post',
+        post_id=comment.post.id,
+        page=request.args.get('page', -1, type=int))
+    )

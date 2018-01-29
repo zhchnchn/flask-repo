@@ -15,8 +15,24 @@
                     <div class="comment-user">
                         <a href="{{ url_for('.user', username=comment.user.username) }}">{{ comment.user.username }}</a>
                     </div>
-                    <div class="comment-title">Comment Title: {{ comment.name }}</div>
-                    <div class="comment-body"> {{ comment.text }} </div>
+                    {# 如果评论被禁，普通用户查看不到 #}
+                    {% if comment.disabled %}
+                    <p><i class="text-danger">This comment has been disabled by admin.</i></p>
+                    {% endif %}
+                    {# 如果当前用户是管理员，仍能够查看被禁的评论 #}
+                    {% if admin.can() or not comment.disabled %}
+                        <div class="comment-title">Comment Title: {{ comment.name }}</div>
+                        <div class="comment-body"> {{ comment.text }} </div>
+                    {% endif %}
+                    {# 如果当前用户是管理员，则可以管理评论 #}
+                    {% if admin.can() %}
+                        <br>
+                        {% if comment.disabled %}
+                        <a class="btn btn-default btn-xs" href="{{ url_for('.moderate_enable', comment_id=comment.id, page=page) }}">Enable</a>
+                        {% else %}
+                        <a class="btn btn-danger btn-xs" href="{{ url_for('.moderate_disable', comment_id=comment.id, page=page) }}">Disable</a>
+                        {% endif %}
+                    {% endif %}
                 </div>
             </li>
             {% endfor %}
