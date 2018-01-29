@@ -11,7 +11,7 @@ from ...extensions import admin_permission, poster_permission, cache
 from . import blog_blueprint
 
 
-@cache.cached(timeout=7200, key_prefix='sidebar_data')
+# @cache.cached(timeout=7200, key_prefix='sidebar_data')
 def sidebar_data():
     """侧边栏函数
     每个页面都有一个侧边栏，显示5篇最新的文章，以及5个最常用的标签
@@ -67,25 +67,38 @@ def home():
 @blog_blueprint.route('/post/<int:post_id>', methods=['GET', 'POST'])
 #@cache.cached(timeout=60)
 def post(post_id):
+    post = Post.query.get_or_404(post_id)
     form = CommentForm()
     if form.validate_on_submit():
-        new_comment = Comment()
-        new_comment.name = form.name.data
+        new_comment = Comment(name=form.name.data)
         new_comment.text = form.text.data
-        new_comment.post_id = post_id
         new_comment.date = datetime.datetime.utcnow()
+        new_comment.disabled = False
+        new_comment.post = post
+        new_comment.user = current_user._get_current_object()
 
         db.session.add(new_comment)
         db.session.commit()
-        return redirect(url_for('.post', post_id=post_id))
+        flash('Your comment has been published.', category='success')
+        return redirect(url_for('.post', post_id=post_id, page=-1))
 
-    post = Post.query.get_or_404(post_id)
+    page = request.args.get('page', 1, type=int)
+    # -1为一个特殊的页数，值为-1时，会计算评论的总量和总页数，求出评论的最后一页
+    if page == -1:
+        page = (post.comments.count() - 1) / \
+               current_app.config['PAGINATION_COMMENTS_PER_PAGE'] + 1
+    pagination = post.comments.order_by(Comment.date.asc()).paginate(
+        page,
+        per_page=current_app.config['PAGINATION_COMMENTS_PER_PAGE'],
+        error_out=False
+    )
+    comments = pagination.items
     tags = post.tags
-    comments = post.comments.order_by(Comment.date.desc()).all()
     recent, top_tags = sidebar_data()
 
     return render_template('post.html', post=post, tags=tags, comments=comments,
-                           recent=recent, top_tags=top_tags, form=form)
+                           recent=recent, top_tags=top_tags, form=form,
+                           pagination=pagination)
 
 
 @blog_blueprint.route('/new', methods=['GET', 'POST'])

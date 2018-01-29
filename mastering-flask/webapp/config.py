@@ -22,6 +22,8 @@ class Config(object):
     PAGINATION_POST_PER_PAGE = 10
     # 分页，每页显示的关注者数目
     PAGINATION_FOLLOWERS_PER_PAGE = 50
+    # 分页，每页显示的评论数
+    PAGINATION_COMMENTS_PER_PAGE = 30
 
 
 class ProductConfig(Config):

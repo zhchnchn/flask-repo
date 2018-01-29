@@ -39,8 +39,10 @@
             </div>
         </div>
         <div class="row">
-            <h1>Comments ({{ comments | length }})</h1>
-            <div class="col-lg-12">
+            <h2>Comments ({{ comments | length }})</h2>
+            {# 仅对登录用户显示评论表单 #}
+            {% if current_user.is_authenticated %}
+            <div class="comment-form, col-lg-12">
                 <h3>New Comment:</h3>
                 <form method="POST" action="{{ url_for('.post', post_id=post.id, _external=True) }}">
                     {{ form.hidden_tag() }}
@@ -65,19 +67,13 @@
                     <input class="btn btn-primary" type="submit" value="Add Comment">
                 </form>
             </div>
-            <div class="col-lg-12">
-                {% if comments | length == 0 %}
-                <p>There are no comments for this post.</p>
-                {% else %}
-                    {% for comment in comments %}
-                        <div class="well">
-                            <p>Comment Title: {{ comment.name }}</p>
-                            <p>{{ comment.text }}</p>
-                            <p>{{ moment(comment.date).fromNow(refresh=True) }}</p>
-                        </div>
-                    {% endfor %}
-                {% endif %}
+            {% endif %}
+            {% include '_comments.html' %}
+            {% if pagination %}
+            <div class="pagination">
+                {{ pagination_widget(pagination, endpoint='.post', post_id=post.id) }}
             </div>
+            {% endif %}
         </div>
     </div>
     {% include '_sidebar.html' %}

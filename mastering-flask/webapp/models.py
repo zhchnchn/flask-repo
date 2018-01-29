@@ -374,11 +374,15 @@ class Comment(db.Model):
 
         random.seed()
         post_count = Post.query.count()
+        user_count = Post.query.count()
         for i in xrange(count):
             post = Post.query.offset(random.randint(0, post_count - 1)).first()
+            user = User.query.offset(random.randint(0, user_count - 1)).first()
             c = Comment(name=forgery_py.lorem_ipsum.title())
             c.text = forgery_py.lorem_ipsum.sentences(random.randint(1, 5))
             c.date = forgery_py.date.date(True)
+            c.disabled = False
+            c.user = user
             c.post = post
             db.session.add(c)
 

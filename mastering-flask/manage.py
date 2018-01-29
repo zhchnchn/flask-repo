@@ -37,7 +37,7 @@ def insert_data():
     User.generate_fake()
     Tag.generate_fake()
     Post.generate_fake()
-    Comment.generate_fake()
+    Comment.generate_fake(1000)
 
 
 @manager.command

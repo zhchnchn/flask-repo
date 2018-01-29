@@ -1,0 +1,25 @@
+<div class="col-lg-12">
+    <ul class="comments">
+        {% if comments | length == 0 %}
+        <p>There are no comments for this post.</p>
+        {% else %}
+            {% for comment in comments %}
+            <li class="comment">
+                <div class="comment-thumbnail">
+                    <a href="{{ url_for('.user', username=comment.user.username) }}">
+                        <img class="img-rounded profile-thumbnail" src="{{ comment.user.gravatar(size=40) }}">
+                    </a>
+                </div>
+                <div class="comment-content">
+                    <div class="comment-date">{{ moment(comment.date).fromNow(refresh=True) }}</div>
+                    <div class="comment-user">
+                        <a href="{{ url_for('.user', username=comment.user.username) }}">{{ comment.user.username }}</a>
+                    </div>
+                    <div class="comment-title">Comment Title: {{ comment.name }}</div>
+                    <div class="comment-body"> {{ comment.text }} </div>
+                </div>
+            </li>
+            {% endfor %}
+        {% endif %}
+    </ul>
+</div>
