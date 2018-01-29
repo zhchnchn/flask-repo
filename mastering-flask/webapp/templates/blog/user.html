@@ -20,17 +20,20 @@
         </p>
         <p>Published {{ user.posts.count() }} blog posts.</p>
         <p>
-            {% if user != current_user %}
-                {% if not current_user.is_following(user) %}
-                <a href="{{ url_for('.follow', username=user.username) }}" class="btn btn-primary">Follow</a>
-                {% else%}
-                <a href="{{ url_for('.unfollow', username=user.username) }}" class="btn btn-primary">Unfollow</a>
-                {% endif %}
-            {% endif %}
             <a href="{{ url_for('.followers', username=user.username) }}">Followers: <span class="badge">{{ user.followers.count() }}</span></a>
             <a href="{{ url_for('.followed_by', username=user.username) }}">Followings: <span class="badge">{{ user.followings.count() }}</span></a>
-            {% if user != current_user and user.is_following(current_user) %}
-            | <span class="label label-default">Follows you</span>
+            {# 下面的链接需要current_user不是匿名用户，因为AnonymousUserMixin没有实现is_following等方法 #}
+            {% if current_user.is_authenticated %}
+                {% if user != current_user %}
+                    {% if not current_user.is_following(user) %}
+                    <a href="{{ url_for('.follow', username=user.username) }}" class="btn btn-primary">Follow</a>
+                    {% else%}
+                    <a href="{{ url_for('.unfollow', username=user.username) }}" class="btn btn-primary">Unfollow</a>
+                    {% endif %}
+                {% endif %}
+                {% if user != current_user and user.is_following(current_user) %}
+                | <span class="label label-default">Follows you</span>
+                {% endif %}
             {% endif %}
         </p>
         {% if user == current_user %}
