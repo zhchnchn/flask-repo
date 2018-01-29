@@ -10,4 +10,5 @@ blog_blueprint = Blueprint('blog', __name__,
                                'templates', 'blog'),
                            url_prefix='/blog')
 
-from . import views
+
+from . import views, errors

@@ -55,7 +55,7 @@
             </div>
         </div>
         <div class="jumbotron">
-            <h1><a href="{{ url_for('.home', _external=True) }}">My Blog</a></h1>
+            <h1><a href="{{ url_for('blog.home', _external=True) }}">My Blog</a></h1>
 
             <p>Hello,
             {% if current_user.is_authenticated %}
