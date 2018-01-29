@@ -36,10 +36,14 @@
                     <span class="label label-danger">Edit [Admin]</span>
                 </a>
                 {% endif %}
+                {# 指向页面内评论片段 #}
+                <a href="{{ url_for('.post', post_id=post.id) }}#comments">
+                    <span class="label label-primary">{{ post.comments.count() }} Comments</span>
+                </a>
             </div>
         </div>
         <div class="row">
-            <h2>Comments ({{ comments | length }})</h2>
+            <h2 id="comments">Comments ({{ post.comments.count() }})</h2>
             {# 仅对登录用户显示评论表单 #}
             {% if current_user.is_authenticated %}
             <div class="comment-form, col-lg-12">
@@ -71,7 +75,7 @@
             {% include '_comments.html' %}
             {% if pagination %}
             <div class="pagination">
-                {{ pagination_widget(pagination, endpoint='.post', post_id=post.id) }}
+                {{ pagination_widget(pagination, endpoint='.post', fragment='#comments', post_id=post.id) }}
             </div>
             {% endif %}
         </div>
