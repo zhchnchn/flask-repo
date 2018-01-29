@@ -32,10 +32,10 @@ roles_users_table = db.Table(
 # follows table
 class Follow(db.Model):
     __tablename__ = 'follows'
-    following_id = db.Column(db.Integer(), db.ForeignKey('users.id'),
-                             primary_key=True)
     follower_id = db.Column(db.Integer(), db.ForeignKey('users.id'),
                             primary_key=True)
+    following_id = db.Column(db.Integer(), db.ForeignKey('users.id'),
+                             primary_key=True)
     timestamp = db.Column(db.DateTime(), default=datetime.datetime.utcnow)
 
 
@@ -194,6 +194,12 @@ class User(UserMixin, db.Model):
 
         return '{url}/{hash}?s={size}&d={default}&r={rating}'.format(
             url=url, hash=hash_val, size=size, default=default, rating=rating)
+
+    @property
+    def following_posts(self):
+        return Post.query.join(
+            Follow, Follow.following_id == Post.user_id
+        ).filter(Follow.follower_id == self.id)
 
     # 生成模拟数据
     @staticmethod

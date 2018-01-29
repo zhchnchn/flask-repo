@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import datetime
 from flask import render_template, redirect, url_for, abort, flash, current_app, \
-    request
+    request, make_response
 from flask_login import login_required, current_user
 from flask_principal import Permission, UserNeed
 from sqlalchemy import func, desc
@@ -43,7 +43,15 @@ def sidebar_data():
 # @cache.cached(timeout=60)
 def home():
     page = request.args.get('page', 1, type=int)
-    pagination = Post.query.order_by(Post.publish_date.desc()).paginate(
+    # 决定显示所有博客文章还是只显示所关注用户文章的选项存储在cookie的show_following字段中
+    show_following = False
+    if current_user.is_authenticated:
+        show_following = bool(request.cookies.get('show_following', ''))
+    if show_following:
+        query = current_user.following_posts
+    else:
+        query = Post.query
+    pagination = query.order_by(Post.publish_date.desc()).paginate(
         page,
         per_page=current_app.config['PAGINATION_POST_PER_PAGE'],
         error_out=False
@@ -52,7 +60,8 @@ def home():
     recent, top_tags = sidebar_data()
 
     return render_template('home.html', posts=posts, recent=recent,
-                           top_tags=top_tags, pagination=pagination)
+                           top_tags=top_tags, pagination=pagination,
+                           show_following=show_following)
 
 
 @blog_blueprint.route('/post/<int:post_id>', methods=['GET', 'POST'])
@@ -259,6 +268,7 @@ def followers(username):
                            endpoint='.followers', pagination=pagination,
                            follows=follows)
 
+
 @blog_blueprint.route('/followed-by/<username>')
 def followed_by(username):
     user = User.query.filter_by(username=username).first()
@@ -276,3 +286,26 @@ def followed_by(username):
     return render_template('followers.html', user=user, title='Followed by',
                            endpoint='.followed_by', pagination=pagination,
                            follows=follows)
+
+
+@blog_blueprint.route('/all-posts')
+@login_required
+def show_all():
+    '''
+    响应值为重定向到home，主要目的是设置cookie：show_following to False
+    cookie只能在响应对象中设置，因此不能依赖Flask，要使用make_response()方法创建响应对象。
+    '''
+    resp = make_response(redirect(url_for('.home')))
+    resp.set_cookie('show_following', '', max_age=30*24*60*60)
+    return resp
+
+
+@blog_blueprint.route('/following-posts')
+@login_required
+def show_following():
+    '''
+    响应值为重定向到home，主要目的是设置cookie：show_following to True
+    '''
+    resp = make_response(redirect(url_for('.home')))
+    resp.set_cookie('show_following', '1', max_age=30*24*60*60)
+    return resp
