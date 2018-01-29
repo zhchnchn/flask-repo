@@ -10,6 +10,7 @@ from extensions import bcrypt, login_manager, principal, rest_api, \
 from .controllers.blog import blog_blueprint
 from .controllers.main import main_blueprint
 from .controllers.auth import auth_blueprint
+from .controllers.api_1_0 import api_blueprint
 from .controllers.rest.auth import AuthApi
 from .controllers.rest.post import PostApi
 from .controllers.admin import CustomView, CustomModelView, PostView, \
@@ -98,6 +99,8 @@ def create_app(config_name):
     app.register_blueprint(blog_blueprint)
     app.register_blueprint(main_blueprint)
     app.register_blueprint(auth_blueprint)
+    # register api blueprint
+    app.register_blueprint(api_blueprint)
 
     return app
 
