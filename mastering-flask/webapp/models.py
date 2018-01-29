@@ -60,6 +60,7 @@ class User(UserMixin, db.Model):
     posts = db.relationship('Post', backref='user', lazy='dynamic')
     roles = db.relationship('Role', secondary=roles_users_table,
                             backref=db.backref('users', lazy='dynamic'))
+    comments = db.relationship('Comment', backref='user', lazy='dynamic')
     # 关注别人的一对多关系，多的一方为Follow模型
     followings = db.relationship(
         'Follow',
@@ -356,7 +357,9 @@ class Comment(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(255))
     text = db.Column(db.Text())
-    date = db.Column(db.DateTime())
+    date = db.Column(db.DateTime(), index=True, default=datetime.datetime.utcnow)
+    disabled = db.Column(db.Boolean())  # 查禁不当评论
+    user_id = db.Column(db.Integer(), db.ForeignKey('users.id'))
     post_id = db.Column(db.Integer(), db.ForeignKey('posts.id'))
 
     def __init__(self, name):
