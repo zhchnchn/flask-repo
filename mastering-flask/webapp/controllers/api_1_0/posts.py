@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 from flask import jsonify, request, g, url_for, current_app
-from flask_login import login_required
 from flask_principal import Permission, UserNeed
-
 from ...models import db, Post
-from ...extensions import admin_permission, poster_permission
+from ...extensions import admin_permission
 from . import api_blueprint
 from .errors import forbidden
 
@@ -40,8 +38,6 @@ def get_post(id):
 
 
 @api_blueprint.route('/posts/', methods=['POST'])
-@login_required
-@poster_permission.require(http_exception=403)
 def new_post():
     post = Post.from_json(request.json)
     post.user = g.current_user
@@ -56,8 +52,6 @@ def new_post():
 
 
 @api_blueprint.route('/posts/<int:id>', methods=['PUT'])
-@login_required
-@poster_permission.require(http_exception=403)
 def edit_post(id):
     post = Post.query.get_or_404(id)
     permission = Permission(UserNeed(post.user_id))

@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 from flask import jsonify, request, g, url_for, current_app
-from flask_login import login_required
-from ...extensions import poster_permission
 from ...models import db, Post, Comment
 from . import api_blueprint
 
@@ -64,8 +62,6 @@ def get_post_comments(id):
 
 
 @api_blueprint.route('/posts/<int:id>/comments/', methods=['POST'])
-@login_required
-@poster_permission.require(http_exception=403)
 def new_post_comment(id):
     post = Post.query.get_or_404(id)
     comment = Comment.from_json(request.json)
