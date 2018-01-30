@@ -2,7 +2,7 @@
 import datetime
 import hashlib
 import random
-from flask import current_app, request
+from flask import current_app, request, url_for
 from flask_login import UserMixin, AnonymousUserMixin
 from flask_sqlalchemy import SQLAlchemy
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer, \
@@ -97,28 +97,6 @@ class User(UserMixin, db.Model):
 
     def check_password(self, password):
         return bcrypt.check_password_hash(self.password_hash, password)
-
-    # 生成一个签名令牌，用于RESTful API
-    def generate_auth_token(self, expiration=600):
-        s = Serializer(current_app.config['SECRET_KEY'],
-                       expires_in=expiration)
-        return s.dumps({'id': self.id}).decode('ascii')
-
-    # 解码令牌，用于RESTful API
-    @staticmethod
-    # @cache.memoize(timeout=60)
-    def verify_auth_token(token):
-        s = Serializer(current_app.config['SECRET_KEY'])
-
-        try:
-            data = s.loads(token)
-        except SignatureExpired:
-            return None
-        except BadSignature:
-            return None
-
-        user = User.query.get(data['id'])
-        return user
 
     def generate_confirmation_token(self, expiration=3600):
         s = Serializer(current_app.config['SECRET_KEY'], expiration)
@@ -289,6 +267,42 @@ class User(UserMixin, db.Model):
             db.session.delete(f)
             db.session.commit()
 
+    # 生成一个签名令牌，用于RESTful API
+    def generate_auth_token(self, expiration=600):
+        s = Serializer(current_app.config['SECRET_KEY'],
+                       expires_in=expiration)
+        return s.dumps({'id': self.id}).decode('ascii')
+
+    # 解码令牌，用于RESTful API
+    @staticmethod
+    # @cache.memoize(timeout=60)
+    def verify_auth_token(token):
+        s = Serializer(current_app.config['SECRET_KEY'])
+
+        try:
+            data = s.loads(token)
+        except SignatureExpired:
+            return None
+        except BadSignature:
+            return None
+
+        user = User.query.get(data['id'])
+        return user
+
+    # 将资源序列化为JSON
+    def to_json(self):
+        json_user = {
+            'url': url_for('api.get_user', id=self.id, _external=True),
+            'username': self.username,
+            'member_since': self.register_time,
+            'last_seen': self.last_seen,
+            'posts': url_for('api.get_user_posts', id=self.id, _external=True),
+            'following_posts': url_for('api.get_user_following_posts',
+                                       id=self.id, _external=True),
+            'post_count': self.posts.count()
+        }
+        return json_user
+
 
 class AnonymousUser(AnonymousUserMixin):
     def __init__(self):
@@ -297,6 +311,13 @@ class AnonymousUser(AnonymousUserMixin):
 
 # 设置自己的匿名类，覆盖Flask-Login默认提供的AnonymousUser
 login_manager.anonymous_user = AnonymousUser
+
+
+# 加载用户的回调函数load_user, 接收以Unicode字符串形式表示的用户标识符
+@login_manager.user_loader
+def load_user(userid):
+    # 字符串userid转为int再查询
+    return User.query.get(int(userid))
 
 
 class Role(db.Model):
@@ -365,6 +386,20 @@ class Post(db.Model):
 
         db.session.commit()
 
+    def to_json(self):
+        json_post = {
+            'url': url_for('api.get_post', id=self.id, _external=True),
+            'title': self.title,
+            'text': self.text,
+            'publish_date': self.publish_date,
+            'author': url_for('api.get_user', id=self.user_id,
+                              _external=True),
+            'comments': url_for('api.get_post_comments', id=self.id,
+                                _external=True),
+            'comment_count': self.comments.count()
+        }
+        return json_post
+
 
 class Comment(db.Model):
     __tablename__ = 'comments'
@@ -402,6 +437,18 @@ class Comment(db.Model):
             db.session.add(c)
 
         db.session.commit()
+
+    def to_json(self):
+        json_comment = {
+            'url': url_for('api.get_comment', id=self.id, _external=True),
+            'name': self.name,
+            'text': self.text,
+            'date': self.date,
+            'disabled': self.disabled,
+            'author': url_for('api.get_user', id=self.user_id, _external=True),
+            'post': url_for('api.get_post', id=self.post_id, _external=True)
+        }
+        return json_comment
 
 
 class Tag(db.Model):

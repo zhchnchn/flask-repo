@@ -33,15 +33,6 @@ login_manager.login_message = 'Please login to access this page'
 login_manager.login_message_category = 'info'
 
 
-# 加载用户的回调函数load_user, 接收以Unicode字符串形式表示的用户标识符
-#
-@login_manager.user_loader
-def load_user(userid):
-    from models import User
-    # 字符串userid转为int再查询
-    return User.query.get(int(userid))
-
-
 # ******************* Flask-Principal extension ****************************** #
 
 principal = Principal()
