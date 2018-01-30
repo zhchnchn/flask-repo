@@ -3,6 +3,7 @@ from flask import jsonify
 from . import api_blueprint
 from ...exceptions import ValidationError
 
+
 def bad_request(message):
     response = jsonify({'error': '400 - bad request', 'message': message})
     response.status_code = 400

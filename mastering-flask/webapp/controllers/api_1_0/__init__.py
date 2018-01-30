@@ -6,4 +6,5 @@ api_blueprint = Blueprint('api', __name__,
                            url_prefix='/api/v1.0')
 
 
+from . import authentication, errors, posts, users, comments
 
