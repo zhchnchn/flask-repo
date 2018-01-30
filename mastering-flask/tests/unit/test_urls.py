@@ -20,7 +20,7 @@ class UrlsTestCase(unittest.TestCase):
         # 必须push context，否则会报错误
         self.app_context = self.app.app_context()
         self.app_context.push()
-        self.client = self.app.test_client()
+        self.client = self.app.test_client(use_cookies=True)
 
         # Bug workaround: 如果不在webapp目录中运行，
         # 则Flask SQLAlchemy的初始化代码就不能正确地在应用对象中进行初始化
