@@ -45,6 +45,8 @@ class UrlsTestCase(unittest.TestCase):
         db.drop_all()
         self.app_context.pop()
 
+    # 辅助方法，返回所有请求都要发送的通用首部，其中包含认证密令和MIME类型相关的首部。
+    # 大多数测试都要发送这些首部。
     def get_api_headers(self, username_or_token, password):
         return {
             'Authorization': 'Basic ' + b64encode(
