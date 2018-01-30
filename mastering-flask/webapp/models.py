@@ -8,6 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer, \
     SignatureExpired, BadSignature
 from .extensions import bcrypt, cache, login_manager
+from .exceptions import ValidationError
 
 db = SQLAlchemy()
 
@@ -386,6 +387,7 @@ class Post(db.Model):
 
         db.session.commit()
 
+    # 将资源序列化为JSON
     def to_json(self):
         json_post = {
             'url': url_for('api.get_post', id=self.id, _external=True),
@@ -399,6 +401,18 @@ class Post(db.Model):
             'comment_count': self.comments.count()
         }
         return json_post
+
+    # 将JSON反序列化为资源
+    @staticmethod
+    def from_json(json_post):
+        title = json_post.get('title')
+        text = json_post.get('text')
+        if text is None or text == '':
+            raise ValidationError('post does not have a body')
+
+        post = Post(title=title)
+        post.text = text
+        return post
 
 
 class Comment(db.Model):
@@ -449,6 +463,17 @@ class Comment(db.Model):
             'post': url_for('api.get_post', id=self.post_id, _external=True)
         }
         return json_comment
+
+    @staticmethod
+    def from_json(json_comment):
+        name = json_comment.get('name')
+        text = json_comment.get('text')
+        if text is None or text == '':
+            raise ValidationError('comment does not have a body')
+
+        comment = Comment(name=name)
+        comment.text = text
+        return comment
 
 
 class Tag(db.Model):
