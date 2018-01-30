@@ -98,8 +98,15 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return bcrypt.check_password_hash(self.password_hash, password)
 
+    # 生成一个签名令牌，用于RESTful API
+    def generate_auth_token(self, expiration=600):
+        s = Serializer(current_app.config['SECRET_KEY'],
+                       expires_in=expiration)
+        return s.dumps({'id': self.id}).decode('ascii')
+
+    # 解码令牌，用于RESTful API
     @staticmethod
-    @cache.memoize(timeout=60)
+    # @cache.memoize(timeout=60)
     def verify_auth_token(token):
         s = Serializer(current_app.config['SECRET_KEY'])
 

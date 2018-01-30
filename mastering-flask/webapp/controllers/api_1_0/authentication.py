@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from flask import g, jsonify
 from flask_httpauth import HTTPBasicAuth
 from ...models import User, AnonymousUser
 from . import api_blueprint
@@ -10,6 +11,11 @@ auth = HTTPBasicAuth()
 
 
 # 在回调函数中验证密令
+# 第一个认证参数可以是电子邮件地址或认证令牌。如果这个参数为空，那就假定是匿名用户。
+# 如果密码为空，那就假定email_or_token参数提供的是令牌，按照令牌的方式进行认证。
+# 如果两个参数都不为空，假定使用常规的邮件地址和密码进行认证。
+# 在这种实现方式中，基于令牌的认证是可选的，由客户端决定是否使用。
+# 为了让视图函数能区分这两种认证方法，我们添加了g.token_used变量。
 @auth.verify_password
 def verify_password(email_or_token, password):
     if email_or_token == '':
@@ -41,3 +47,13 @@ def before_request():
     if not g.current_user.is_anonymous and not g.current_user.confirmed:
         return forbidden('Unconfirmed account')
 
+
+# 添加到before_request处理程序上的认证机制也会用在这个路由上,
+# 为了避免客户端使用旧令牌申请新令牌，要在视图函数中检查g.token_used变量的值，
+# 如果使用token请求生成token，就拒绝请求
+@api_blueprint.route('token')
+def get_token():
+    if g.current_user.is_anonymous or g.token_used:
+        return unauthorized('Invalid credentials')
+    return jsonify({'token': g.current_user.generate_auth_token(),
+                    'expiration': 600})
