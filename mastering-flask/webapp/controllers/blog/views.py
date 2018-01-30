@@ -43,7 +43,7 @@ def sidebar_data():
 # @cache.cached(timeout=60)
 def home():
     page = request.args.get('page', 1, type=int)
-    # 决定显示所有博客文章还是只显示所关注用户文章的选项存储在cookie的show_following字段中
+    # 决定显示所有博客文章还是只显示所关注用户文章的选项,存储在cookie的show_following字段中
     show_following = False
     if current_user.is_authenticated:
         show_following = bool(request.cookies.get('show_following', ''))

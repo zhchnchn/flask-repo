@@ -3,12 +3,11 @@ import datetime
 import hashlib
 import random
 from flask import current_app, request
-from flask_login import UserMixin
+from flask_login import UserMixin, AnonymousUserMixin
 from flask_sqlalchemy import SQLAlchemy
-from extensions import bcrypt, cache
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer, \
     SignatureExpired, BadSignature
-
+from .extensions import bcrypt, cache, login_manager
 
 db = SQLAlchemy()
 
@@ -282,6 +281,15 @@ class User(UserMixin, db.Model):
         if f:
             db.session.delete(f)
             db.session.commit()
+
+
+class AnonymousUser(AnonymousUserMixin):
+    def __init__(self):
+        self.username = 'Guest'
+
+
+# 设置自己的匿名类，覆盖Flask-Login默认提供的AnonymousUser
+login_manager.anonymous_user = AnonymousUser
 
 
 class Role(db.Model):

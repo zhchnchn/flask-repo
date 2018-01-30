@@ -56,15 +56,8 @@
         </div>
         <div class="jumbotron">
             <h1><a href="{{ url_for('blog.home', _external=True) }}">My Blog</a></h1>
-
-            <p>Hello,
-            {% if current_user.is_authenticated %}
-                {{ current_user.username }},
-            {% else %}
-                Stranger,
-            {% endif %}
-            Welcome to the blog!
-            </p>
+            {# 我们为自定义的匿名用户类AnonymousUser也添加了username属性，因此这里可以不需区分用户是否匿名 #}
+            <p>Hello, {{ current_user.username }}, Welcome to the blog!</p>
         </div>
 
         {% with messages = get_flashed_messages(with_categories=true) %}

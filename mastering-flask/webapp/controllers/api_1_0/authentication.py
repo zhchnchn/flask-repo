@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask_httpauth import HTTPBasicAuth
-from ...models import User
+from ...models import User, AnonymousUser
 from . import api_blueprint
 from .errors import unauthorized, forbidden
 
@@ -13,7 +13,7 @@ auth = HTTPBasicAuth()
 @auth.verify_password
 def verify_password(email_or_token, password):
     if email_or_token == '':
-        #
+        g.current_user = AnonymousUser()
         return True
     if password == '':
         g.current_user = User.verify_auth_token(email_or_token)
