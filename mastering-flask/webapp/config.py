@@ -25,6 +25,15 @@ class Config(object):
     # 分页，每页显示的评论数
     PAGINATION_COMMENTS_PER_PAGE = 30
 
+    # Flask-Mail
+    # 单元测试时需要，因此移到基类来
+    MAIL_SERVER = 'smtp.163.com'
+    MAIL_PORT = 25
+    MAIL_USERNAME = 'xxx@163.com'
+    MAIL_PASSWORD = 'xxx'
+    MAIL_SUBJECT_PREFIX = '[Blog]'
+    MAIL_SENDER = 'Blog Admin <xxx@163.com>'
+
 
 class ProductConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir,
@@ -80,14 +89,6 @@ class DevConfig(Config):
     # Flask-Assets
     # 在开发环境中不要编译库文件
     ASSETS_DEBUG = True
-
-    # Flask-Mail
-    MAIL_SERVER = 'smtp.163.com'
-    MAIL_PORT = 25
-    MAIL_USERNAME = 'xxx@163.com'
-    MAIL_PASSWORD = 'xxx'
-    MAIL_SUBJECT_PREFIX = '[Blog]'
-    MAIL_SENDER = 'Blog Admin <xxx@163.com>'
 
 
 class TestConfig(Config):

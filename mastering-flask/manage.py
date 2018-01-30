@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 import os
-import random
-import datetime
 from flask_script import Manager, Server
 from flask_script.commands import ShowUrls, Clean
 from flask_migrate import Migrate, MigrateCommand
