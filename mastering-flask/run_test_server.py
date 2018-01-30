@@ -16,10 +16,11 @@ default = Role("default")
 poster = Role("poster")
 db.session.add(default)
 db.session.add(poster)
-db.session.commit()
 
 test_user = User("test")
 test_user.password = 'test'
+test_user.confirmed = True
+test_user.email = 'test@163.com'
 test_user.roles.append(poster)
 db.session.add(test_user)
 db.session.commit()
