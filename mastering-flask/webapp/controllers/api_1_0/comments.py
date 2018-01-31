@@ -7,7 +7,7 @@ from . import api_blueprint
 @api_blueprint.route('/comments/')
 def get_comments():
     page = request.args.get('page', 1, type=int)
-    pagination = Comment.query.order_by(Comment.timestamp.desc()).paginate(
+    pagination = Comment.query.order_by(Comment.date.desc()).paginate(
         page,
         per_page=current_app.config['PAGINATION_COMMENTS_PER_PAGE'],
         error_out=False
