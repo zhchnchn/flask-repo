@@ -56,8 +56,11 @@ class User(UserMixin, db.Model):
     last_seen = db.Column(db.DateTime(), default=datetime.datetime.utcnow)
     # 把email的MD5散列值保存在数据库
     gravatar_hash = db.Column(db.String(32))
-    # relations
+    # user-post relations
     posts = db.relationship('Post', backref='user', lazy='dynamic')
+    # NOTE：狗书中的user-role没有使用扩展, 是一对多的关系，
+    # 每个个用户只有一个角色，一个角色可赋给多个用户。
+    # 而Flask-Principal中user-role是多对多的关系。
     roles = db.relationship('Role', secondary=roles_users_table,
                             backref=db.backref('users', lazy='dynamic'))
     comments = db.relationship('Comment', backref='user', lazy='dynamic')
