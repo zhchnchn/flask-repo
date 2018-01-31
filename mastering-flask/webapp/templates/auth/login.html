@@ -34,7 +34,7 @@
                 {% endif %}
                 {{ form.remember(class_='form-control') }}
             </div>
-            <input class="btn btn-primary" type="submit" value="Login">
+            <input class="btn btn-primary" name='submit' type="submit" value="Login">
         </form>
         <br>
         <p>Forgot your password? Click here to <a href="{{ url_for('.password_reset_request') }}">reset password</a>.</p>

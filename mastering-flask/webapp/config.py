@@ -57,8 +57,10 @@ class ProductConfig(Config):
 class DevConfig(Config):
     # SERVER_NAME = 'localhost:5000'
 
-    # Debug tool bar extension
+    # DEBUG模式
     DEBUG = True
+
+    # Debug tool bar extension
     DEBUG_TB_INTERCEPT_REDIRECTS = False
 
     # config.py文件被移动到了app目录下，但我们想将生成的sqlite数据库文件仍然放在外层目录下，
@@ -123,7 +125,9 @@ class DevConfig(Config):
 class TestConfig(Config):
     db_file = tempfile.NamedTemporaryFile()
 
-    DEBUG = True
+    # TESTING模式
+    TESTING = True
+
     # 关闭Flask Debugtoolbar
     DEBUG_TB_ENABLED = False
 

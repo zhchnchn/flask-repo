@@ -80,7 +80,7 @@ def test(coverage=False):
         os.execvp(sys.executable, [sys.executable] + sys.argv)
     # 执行测试
     import unittest
-    tests = unittest.TestLoader().discover('tests/unit')
+    tests = unittest.TestLoader().discover('tests')
     unittest.TextTestRunner(verbosity=2).run(tests)
     # 输出覆盖报告
     if COV:
