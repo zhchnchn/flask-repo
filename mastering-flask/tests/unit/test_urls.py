@@ -28,8 +28,14 @@ class UrlsTestCase(unittest.TestCase):
         db.create_all()
 
         # create role and user
+        # 由于下面有个test_register_and_login测试，要注册新用户，
+        # 在register路由中会默认添加上'poster'和'default'角色，因此这里要先创建两种角色
         poster = Role('poster')
+        poster.description = 'poster role'
+        default = Role('default')
+        default.description = 'default role'
         db.session.add(poster)
+        db.session.add(default)
 
         test_user = User('test')
         test_user.email = 'test@163.com'
