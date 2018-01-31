@@ -13,7 +13,17 @@ if os.environ.get('FLASK_COVERAGE'):
     COV = coverage.coverage(branch=True, include='webapp/*')
     COV.start()
 
-# 默认使用 default 配置
+
+# 导入environment.txt中设置的环境变量
+if os.path.exists('environment.txt'):
+    print('Importing environment from environment.txt...')
+    for line in open('environment.txt'):
+        var = line.strip().split('=')
+        if len(var) == 2:
+            os.environ[var[0]] = var[1]
+
+
+# 读取环境变量FLASK_CONFIG, 若没设置则默认使用 default 配置
 app = create_app(os.environ.get('FLASK_CONFIG', 'default'))
 
 migrate = Migrate(app, db)
