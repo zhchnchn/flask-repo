@@ -40,12 +40,18 @@ class Config(object):
     # 缓慢查询的阈值设为0.5秒
     SLOW_DB_QUERY_TIME = 0.5
 
+    @staticmethod
+    def init_app(app):
+        pass
+
 
 class ProductConfig(Config):
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir,
-                                                          os.path.pardir,
-                                                          'data-product.sqlite')
-    pass
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(
+        basedir, os.path.pardir, 'data-product.sqlite')
+
+    @classmethod
+    def init_app(cls, app):
+        Config.init_app(app)
 
 
 class DevConfig(Config):
@@ -58,9 +64,8 @@ class DevConfig(Config):
     # config.py文件被移动到了app目录下，但我们想将生成的sqlite数据库文件仍然放在外层目录下，
     # 则此处我们必须修改SQLALCHEMY的URL为相对路径。
     # os.path.pardir 返回系统的父目录的表示形式，Linux下为".."
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir,
-                                                          os.path.pardir,
-                                                          'data-dev.sqlite')
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(
+        basedir, os.path.pardir, 'data-dev.sqlite')
     SQLALCHEMY_COMMIT_ON_TERDOWN = True
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     # 将ORM操作转为对应的SQL语句并显示
@@ -96,6 +101,24 @@ class DevConfig(Config):
     # 在开发环境中不要编译库文件
     ASSETS_DEBUG = True
 
+    @classmethod
+    def init_app(cls, app):
+        # call the base class init_app
+        Config.init_app(app)
+
+        # 写入回滚日志
+        import logging
+        from logging.handlers import RotatingFileHandler
+        # 文件大小：1K；文件个数：3个
+        rotate_handler = RotatingFileHandler(
+            "/tmp/flask_log.txt", maxBytes=10, backupCount=3)
+        formatter = logging.Formatter(
+            '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        rotate_handler.setFormatter(formatter)
+        rotate_handler.setLevel(logging.WARNING)
+        app.logger.setLevel(logging.WARNING)
+        app.logger.addHandler(rotate_handler)
+
 
 class TestConfig(Config):
     db_file = tempfile.NamedTemporaryFile()
@@ -120,6 +143,10 @@ class TestConfig(Config):
     # Flask_Assets
     # 在测试环境中不要编译库文件
     ASSETS_DEBUG = True
+
+    @classmethod
+    def init_app(cls, app):
+        Config.init_app(app)
 
 
 config = {

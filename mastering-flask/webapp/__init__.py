@@ -29,6 +29,8 @@ def create_app(config_name):
 
     app = Flask(__name__)
     app.config.from_object(config[config_name])
+    # 首先调用配置对象的init_app
+    config[config_name].init_app(app)
 
     # init SQLAlchemy
     db.init_app(app)
