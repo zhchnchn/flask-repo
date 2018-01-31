@@ -2,7 +2,7 @@
 import os
 from flask_script import Manager, Server
 from flask_script.commands import ShowUrls, Clean
-from flask_migrate import Migrate, MigrateCommand
+from flask_migrate import Migrate, MigrateCommand, upgrade
 from webapp import create_app
 from webapp.models import db, User, Post, Tag, Comment, Role, Follow
 
@@ -92,6 +92,23 @@ def profile(length=25, profile_dir=None):
     app.wsgi_app = ProfilerMiddleware(app.wsgi_app, restrictions=[length],
                                       profile_dir=profile_dir)
     app.run()
+
+
+@manager.command
+def deploy():
+    """Run deployment tasks."""
+    # clear the sqlite data
+    clear_data()
+    print('completed clear data')
+    # migrate database to latest revision
+    upgrade()
+    print('completed upgrade')
+    # insert data
+    insert_data()
+    print('completed insert data')
+    # unit test
+    test(coverage=True)
+    print('completed test')
 
 
 if __name__ == '__main__':
