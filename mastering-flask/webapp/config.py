@@ -34,6 +34,12 @@ class Config(object):
     MAIL_SUBJECT_PREFIX = '[Blog]'
     MAIL_SENDER = 'Blog Admin <xxx@163.com>'
 
+    # Flask-SQLAlchemy
+    # 启用缓慢查询记录功能
+    SQLALCHEMY_RECORD_QUERIES = True
+    # 缓慢查询的阈值设为0.5秒
+    SLOW_DB_QUERY_TIME = 0.5
+
 
 class ProductConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir,

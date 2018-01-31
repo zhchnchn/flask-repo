@@ -4,11 +4,23 @@ from flask import render_template, redirect, url_for, abort, flash, current_app,
     request, make_response
 from flask_login import login_required, current_user
 from flask_principal import Permission, UserNeed
+from flask_sqlalchemy import get_debug_queries
 from sqlalchemy import func, desc
 from ...models import db, Post, Tag, posts_tags_table, Comment, User
 from .forms import CommentForm, PostForm, ProfileEditForm
 from ...extensions import admin_permission, poster_permission, cache
 from . import blog_blueprint
+
+
+@blog_blueprint.after_app_request
+def after_request(response):
+    for query in get_debug_queries():
+        if query.duration >= current_app.config['SLOW_DB_QUERY_TIME']:
+            current_app.logger.warning(
+                'Slow query: %s\nParameters: %s\nDuration: %fs\nContext: %s\n' %
+                (query.statement, query.parameters, query.duration,
+                 query.context))
+    return response
 
 
 # @cache.cached(timeout=7200, key_prefix='sidebar_data')
