@@ -7,7 +7,7 @@ from flask_principal import Identity, AnonymousIdentity, identity_changed, \
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from .forms import LoginForm, RegisterForm, ChangepasswordForm, \
     PasswordResetRequestForm, PasswordResetForm, ChangeEmailForm
-from ...models import db, User
+from ...models import db, User, Role
 from ...email import send_email
 from ...extensions import admin_permission
 from . import auth_blueprint
@@ -90,9 +90,12 @@ def logout():
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
-        new_user = User(form.username.data)
+        new_user = User(username=form.username.data)
         new_user.email = form.email.data
         new_user.password = form.password.data
+        # 新注册用户默认具有poster及以下级别权限
+        new_user.roles.append(Role.query.filter_by(name='poster').first())
+        new_user.roles.append(Role.query.filter_by(name='default').first())
 
         db.session.add(new_user)
         db.session.commit()
