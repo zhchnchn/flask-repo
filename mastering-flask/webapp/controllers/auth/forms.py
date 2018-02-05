@@ -15,6 +15,7 @@ class LoginForm(FlaskForm):
         'Password',
         validators=[DataRequired()])
     remember = BooleanField('Remember me')
+    submit = SubmitField('Login')
 
     def validate(self):
         check_validate = super(LoginForm, self).validate()
@@ -66,6 +67,7 @@ class RegisterForm(FlaskForm):
         ]
     )
     # recaptcha = RecaptchaField()
+    submit = SubmitField('Register')
 
     def validate_email(self, field):
         if User.query.filter_by(email=field.data).first():
